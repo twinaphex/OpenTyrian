@@ -1052,38 +1052,11 @@ static int JE_main_init2 ( void )
    return 0;
 }
 
-void JE_main( void )
+static int JE_main_loop ( void )
 {
 	char buffer[256];
-   uint old_weapon_bar[2] = { 0, 0 };  // only redrawn when they change
-
 	int lastEnemyOnScreen;
-
-	/* NOTE: BEGIN MAIN PROGRAM HERE AFTER LOADING A GAME OR STARTING A NEW ONE */
-
-	/* ----------- GAME ROUTINES ------------------------------------- */
-	/* We need to jump to the beginning to make space for the routines */
-	/* --------------------------------------------------------------- */
-	goto start_level_first;
-
-
-	/*------------------------------GAME LOOP-----------------------------------*/
-
-
-	/* Startlevel is called after a previous level is over.  If the first level
-	   is started for a gaming session, startlevelfirst is called instead and
-	   this code is skipped.  The code here finishes the level and prepares for
-	   the loadmap function. */
-
-start_level:
-   if (JE_main_init() == -1)
-      return;
-
-start_level_first:
-   if (JE_main_init2() == -1)
-      return;
-
-level_loop:
+   static uint old_weapon_bar[2] = { 0, 0 };  // only redrawn when they change
 
 	//tempScreenSeg = game_screen; /* side-effect of game_screen */
 
@@ -1267,7 +1240,7 @@ level_loop:
 		JE_eventSystem();
 
 	if (isNetworkGame && reallyEndLevel)
-		goto start_level;
+		return 1;
 
 	/* SMOOTHIES! */
 	JE_checkSmoothies();
@@ -2228,7 +2201,7 @@ draw_player_shot_loop_end:
 			JE_mainKeyboardInput();
 			newkey = false;
 			if (skipStarShowVGA)
-				goto level_loop;
+            return 0;
 		}
 
 		if (pause_pressed)
@@ -2398,8 +2371,46 @@ draw_player_shot_loop_end:
 	JE_handleChat();
 
 	if (reallyEndLevel)
-		goto start_level;
-	goto level_loop;
+		return 1;
+   return 0;
+}
+
+void JE_main( void )
+{
+   int ret = 0;
+	/* NOTE: BEGIN MAIN PROGRAM HERE AFTER LOADING A GAME OR STARTING A NEW ONE */
+
+	/* ----------- GAME ROUTINES ------------------------------------- */
+	/* We need to jump to the beginning to make space for the routines */
+	/* --------------------------------------------------------------- */
+	goto start_level_first;
+
+
+	/*------------------------------GAME LOOP-----------------------------------*/
+
+
+	/* Startlevel is called after a previous level is over.  If the first level
+	   is started for a gaming session, startlevelfirst is called instead and
+	   this code is skipped.  The code here finishes the level and prepares for
+	   the loadmap function. */
+
+start_level:
+   if (JE_main_init() == -1)
+      return;
+
+start_level_first:
+   if (JE_main_init2() == -1)
+      return;
+
+level_loop:
+   ret = JE_main_loop();
+   switch (ret)
+   {
+      case 0:
+         goto level_loop;
+      case 1:
+         goto start_level;
+   }
 }
 
 /* --- Load Level/Map Data --- */
