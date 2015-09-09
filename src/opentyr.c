@@ -88,11 +88,7 @@ void opentyrian_menu( void )
 	bool menu_items_disabled[] =
 	{
 		false,
-#if defined(TARGET_GCW0)
-		true,
-#else
 		!can_init_any_scaler(false) || !can_init_any_scaler(true),
-#endif
 		false,
 		// false,
 		false,
@@ -203,11 +199,7 @@ void opentyrian_menu( void )
 				}
 				break;
 				
-#ifdef TARGET_DINGUX
-			case SDLK_LCTRL:
-#else
 			case SDLK_RETURN:
-#endif
 				switch (sel)
 				{
 				case MENU_ABOUT:
@@ -269,9 +261,6 @@ void opentyrian_menu( void )
 				}
 				break;
 				
-#ifdef TARGET_DINGUX
-			case SDLK_LALT:
-#endif
 			case SDLK_ESCAPE:
 				quit = true;
 				JE_playSampleNum(S_SPRING);

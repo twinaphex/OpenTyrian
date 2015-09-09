@@ -1235,11 +1235,7 @@ void JE_itemScreen( void )
 				break;
 
 			case SDLK_SPACE:
-#ifdef TARGET_DINGUX
-			case SDLK_LCTRL:
-#else
 			case SDLK_RETURN:
-#endif
 				keyboardUsed = true;
 
 				// if front or rear weapon, update "Done" power level
@@ -1248,9 +1244,6 @@ void JE_itemScreen( void )
 
 				JE_menuFunction(curSel[curMenu]);
 				break;
-#ifdef TARGET_DINGUX
-			case SDLK_LALT:
-#endif
 			case SDLK_ESCAPE:
 				keyboardUsed = true;
 
@@ -2432,17 +2425,10 @@ JE_boolean JE_quitRequest( void )
 					quit_selected = !quit_selected;
 					JE_playSampleNum(S_CURSOR);
 					break;
-#ifdef TARGET_DINGUX
-				case SDLK_LCTRL:
-#else
 				case SDLK_RETURN:
-#endif
 				case SDLK_SPACE:
 					done = true;
 					break;
-#ifdef TARGET_DINGUX
-				case SDLK_LALT:
-#endif
 				case SDLK_ESCAPE:
 					quit_selected = false;
 					done = true;
@@ -2719,9 +2705,6 @@ void JE_menuFunction( JE_byte select )
 				}
 				
 				if (lastkey_sym != SDLK_ESCAPE && // reserved for menu
-#ifdef TARGET_DINGUX
-					lastkey_sym != SDLK_RETURN && // reserved for ingame menu
-#endif
 				    lastkey_sym != SDLK_F11 &&    // reserved for gamma
 				    lastkey_sym != SDLK_p)        // reserved for pause
 				{

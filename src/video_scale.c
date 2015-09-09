@@ -31,19 +31,10 @@ static void no_scale( SDL_Surface *src_surface, SDL_Surface *dst_surface );
 static void nn_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
 static void nn_16( SDL_Surface *src_surface, SDL_Surface *dst_surface );
 
-#if !defined(TARGET_GP2X) && !defined(TARGET_DINGUX)
 static void scale2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
 static void scale2x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface );
 static void scale3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
 static void scale3x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface );
-#else
-
-static void s1dot2_16( SDL_Surface *src_surface, SDL_Surface *dst_surface );
-static void s1dot2_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
-
-static void hqs1dot2_16( SDL_Surface *src_surface, SDL_Surface *dst_surface );
-static void hqs1dot2_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
-#endif
 
 void hq2x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
 void hq3x_32( SDL_Surface *src_surface, SDL_Surface *dst_surface );
@@ -53,14 +44,6 @@ uint scaler;
 
 const struct Scalers scalers[] =
 {
-#if defined(TARGET_GP2X) || defined(TARGET_DINGUX)
-	{ 320,           240,            no_scale, nn_16,      nn_32,      "None" },
-#if defined(TARGET_GCW0)
-	{ 320,           200,            shw_8,    shw_16,     shw_32,     "Scale HW"},
-#endif
-	{ 320,           240,            NULL,     s1dot2_16,  s1dot2_32,  "Scale1.2x" },
-	{ 320,           240,            NULL,     hqs1dot2_16,hqs1dot2_32,"hq1.2x" },
-#else
 	{ 1 * vga_width, 1 * vga_height, no_scale, nn_16,      nn_32,      "None" },
 	{ 2 * vga_width, 2 * vga_height, NULL,     nn_16,      nn_32,      "2x" },
 	{ 2 * vga_width, 2 * vga_height, NULL,     scale2x_16, scale2x_32, "Scale2x" },
@@ -70,7 +53,6 @@ const struct Scalers scalers[] =
 	{ 3 * vga_width, 3 * vga_height, NULL,     NULL,       hq3x_32,    "hq3x" },
 	{ 4 * vga_width, 4 * vga_height, NULL,     nn_16,      nn_32,      "4x" },
 	{ 4 * vga_width, 4 * vga_height, NULL,     NULL,       hq4x_32,    "hq4x" },
-#endif
 };
 const uint scalers_count = COUNTOF(scalers);
 
@@ -85,10 +67,6 @@ void set_scaler_by_name( const char *name )
 		}
 	}
 }
-
-#if defined(TARGET_GP2X) || defined(TARGET_DINGUX)
-#define VGA_CENTERED
-#endif
 
 void no_scale( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 {
@@ -451,181 +429,3 @@ void scale3x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 		dst = dst_temp + 3 * dst_pitch;
 	}
 }
-
-#if defined(TARGET_GP2X) || defined(TARGET_DINGUX)
-static void s1dot2_16( SDL_Surface *src_surface, SDL_Surface *dst_surface )
-{
-	Uint8 * src = src_surface->pixels;
-	Uint16* dst = dst_surface->pixels;
-
-	int dst_pitch = dst_surface->pitch/2;
-
-	/*
-	 * Draw known collumns. (39 outta each 40 in a group of four are available.)
-	 */
-	int i,j,l;
-	for (i=0; i<40; i++)
-	{
-		for (j=0; j<5; j++)
-		{
-			for (l=0; l<320; l++)
-			{
-				*dst++ = rgb_palette[*src++];
-			}
-		}
-		dst += dst_pitch;
-	}
-
-	/*
-	 * Start over, let's drawn unknown collumns by doing the average of two knowns. (up+down)
-	 */
-	dst = dst_surface->pixels;
-
-	for (i=0; i<40; i++) {
-		dst += dst_pitch * 5;
-
-		for (j=0; j<320; j++) {
-			*dst = *(dst-dst_pitch);
-			dst++;
-		}
-	}
-}
-
-static void s1dot2_32( SDL_Surface *src_surface, SDL_Surface *dst_surface )
-{
-	Uint8 * src = src_surface->pixels;
-	Uint32* dst = dst_surface->pixels;
-
-	int dst_pitch = dst_surface->pitch/4;
-
-	/*
-	 * Draw known collumns. (39 outta each 40 in a group of four are available.)
-	 */
-	int i,j,l;
-	for (i=0; i<40; i++)
-	{
-		for (j=0; j<5; j++)
-		{
-			for (l=0; l<320; l++)
-			{
-				*dst++ = rgb_palette[*src++];
-			}
-		}
-		dst += dst_pitch;
-	}
-
-	/*
-	 * Start over, let's drawn unknown collumns by doing the average of two knowns. (up+down)
-	 */
-	dst = dst_surface->pixels;
-
-	for (i=0; i<40; i++) {
-		dst += dst_pitch * 5;
-
-		for (j=0; j<320; j++) {
-			*dst = *(dst-dst_pitch);
-			dst++;
-		}
-	}
-}
-
-static void hqs1dot2_16( SDL_Surface *src_surface, SDL_Surface *dst_surface )
-{
-	Uint8 * src = src_surface->pixels;
-	Uint16* dst = dst_surface->pixels;
-
-	int dst_pitch = dst_surface->pitch/2;
-
-	/*
-	 * Draw known rows. (39 out of each 40 in six groups are available.)
-	 */
-	int i,j,l;
-	for (i=0; i<40; i++)
-	{
-		for (j=0; j<5; j++)
-		{
-			for (l=0; l<320; l++)
-			{
-				*dst++ = rgb_palette[*src++];
-			}
-		}
-		dst += dst_pitch;
-	}
-
-	/*
-	 * Start over, let's draw unknown rows by doing the average of two known ones. (up+down)
-	 */
-	dst = dst_surface->pixels;
-
-	for (i=0; i<39; i++) {
-		dst += dst_pitch * 5;
-
-		for (j=0; j<320; j++) {
-			Uint16 C1 = *(dst-dst_pitch),C2 = *(dst+dst_pitch);
-			*dst = (((C1 & 0xF7DE) >> 1) + ((C2 & 0xF7DE) >> 1)) //Average upper and lower pixel- lose some precision
-					+ (C1 & C2 & 0x0821); //Error correction
-
-			dst++;
-		}
-	}
-}
-
-static void hqs1dot2_32( SDL_Surface *src_surface, SDL_Surface *dst_surface )
-{
-	Uint8 * src = src_surface->pixels;
-	Uint32* dst = dst_surface->pixels;
-
-	int dst_pitch = dst_surface->pitch/4;
-
-	/*
-	 * Draw known rows. (39 out of each 40 in six groups are available.)
-	 */
-	int i,j,l;
-	for (i=0; i<40; i++)
-	{
-		for (j=0; j<5; j++)
-		{
-			for (l=0; l<320; l++)
-			{
-				*dst++ = rgb_palette[*src++];
-			}
-		}
-		dst += dst_pitch;
-	}
-
-	/*
-	 * Start over, let's draw unknown rows by doing the average of two known ones. (up+down)
-	 */
-	dst = dst_surface->pixels;
-
-	for (i=0; i<39; i++) {
-		dst += dst_pitch * 5;
-
-		for (j=0; j<320; j++) {
-			Uint32 C1 = *(dst-dst_pitch), C2 = *(dst+dst_pitch);
-			*dst = (((C1 & 0xFEFEFEFE) >> 1) + ((C2 & 0xFEFEFEFE) >> 1)) //Average upper and lower pixel- lose some precision.
-					+ (C1 & C2 & 0x01010101); //Error Correction
-
-			dst++;
-		}
-	}
-}
-
-#endif
-
-#if defined (TARGET_GCW0)
-void shw_8( SDL_Surface *src_surface, SDL_Surface *dst_surface )
-{
-	no_scale(src_surface, dst_surface);
-}
-
-void shw_16( SDL_Surface *src_surface, SDL_Surface *dst_surface )
-{
-	nn_16(src_surface, dst_surface);
-}
-
-void shw_32( SDL_Surface *src_surface, SDL_Surface *dst_surface )
-{
-	nn_32(src_surface, dst_surface);
-}
-#endif

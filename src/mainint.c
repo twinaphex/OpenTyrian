@@ -289,17 +289,9 @@ void JE_helpSystem( JE_byte startTopic )
 								break;
 						}
 					}
-#ifdef TARGET_DINGUX
-				} while (!(lastkey_sym == SDLK_LALT || lastkey_sym == SDLK_LCTRL));
-#else
 				} while (!(lastkey_sym == SDLK_ESCAPE || lastkey_sym == SDLK_RETURN));
-#endif
 
-#ifdef TARGET_DINGUX
-				if (lastkey_sym == SDLK_LCTRL)
-#else
 				if (lastkey_sym == SDLK_RETURN)
-#endif
 				{
 					page = topicStart[menu-1];
 					JE_playSampleNum(S_CLICK);
@@ -433,17 +425,9 @@ void JE_helpSystem( JE_byte startTopic )
 
 		if (page == 255)
 		{
-#ifdef TARGET_DINGUX
-			lastkey_sym = SDLK_LALT;
-#else
 			lastkey_sym = SDLK_ESCAPE;
-#endif
 		}
-#ifdef TARGET_DINGUX
-	} while (lastkey_sym != SDLK_LALT);
-#else
 	} while (lastkey_sym != SDLK_ESCAPE);
-#endif
 }
 
 // cost to upgrade a weapon power from power-1 (where power == 0 indicates an unupgraded weapon)
@@ -670,11 +654,7 @@ void JE_loadScreen( void )
 					sel -= 11;
 				}
 				break;
-#ifdef TARGET_DINGUX
-			case SDLK_LCTRL:
-#else
 			case SDLK_RETURN:
-#endif
 				if (sel < max)
 				{
 					if (saveFiles[sel - 1].level > 0)
@@ -692,9 +672,6 @@ void JE_loadScreen( void )
 
 
 				break;
-#ifdef TARGET_DINGUX
-			case SDLK_LALT:
-#endif
 			case SDLK_ESCAPE:
 				quit = true;
 				break;
@@ -1014,10 +991,6 @@ void JE_highScoreScreen( void )
 		{
 			switch (lastkey_sym)
 			{
-#ifdef TARGET_DINGUX
-			case SDLK_LCTRL:
-			case SDLK_LALT:
-#endif
 			case SDLK_RETURN:
 			case SDLK_ESCAPE:
 				quit = true;
@@ -1106,11 +1079,7 @@ void JE_doInGameSetup( void )
 		}
 		quitRequested = false;
 
-#ifdef TARGET_DINGUX
-		keysactive[SDLK_LALT] = false;
-#else
 		keysactive[SDLK_ESCAPE] = false;
-#endif
 
 #ifdef WITH_NETWORK
 		if (isNetworkGame)
@@ -1249,11 +1218,7 @@ JE_boolean JE_inGameSetup( void )
 		{
 			switch (lastkey_sym)
 			{
-#ifdef TARGET_DINGUX
-				case SDLK_LCTRL:
-#else
 				case SDLK_RETURN:
-#endif
 					JE_playSampleNum(S_SELECT);
 					switch (sel)
 					{
@@ -1286,12 +1251,6 @@ JE_boolean JE_inGameSetup( void )
 							break;
 					}
 					break;
-#ifdef TARGET_DINGUX
-				case SDLK_RETURN:
-					keysactive[SDLK_RETURN] = false;
-					//purposeful fall-through
-				case SDLK_LALT:
-#endif
 				case SDLK_ESCAPE:
 					quit = true;
 					JE_playSampleNum(S_SPRING);
@@ -1642,57 +1601,10 @@ void JE_highScoreCheck( void )
 					}
 					else if (newkey)
 					{
-#ifndef TARGET_DINGUX
 						bool validkey = false;
-#endif
 						lastkey_char = toupper(lastkey_char);
 						switch((lastkey_sym < 255) ? lastkey_char : lastkey_sym)
 						{
-#ifdef TARGET_DINGUX
-							case SDLK_UP:
-								temp = (temp==0) ? 1 : temp;
-
-								stemp[temp-1]++;
-								stemp[temp-1] = (stemp[temp-1]<' ') ? ' ' : (stemp[temp-1]>'z') ? ' ' : stemp[temp-1]; //delimit character range
-								break;
-							case SDLK_DOWN:
-								temp = (temp==0) ? 1 : temp;
-
-								stemp[temp-1]--;
-								stemp[temp-1] = (stemp[temp-1]<' ') ? 'z' : (stemp[temp-1]>'z') ? 'z' : stemp[temp-1]; //delimit character range
-								break;
-
-							case SDLK_LEFT:
-								if (temp > 0) {
-									temp--;
-									stemp[temp] = ' ';
-								}
-								break;
-							case SDLK_RIGHT:
-								if (temp < 29) {
-									temp++;
-								}
-								break;
-							case SDLK_LSHIFT:
-								//Change character case. If not 'a-z' or 'A-Z', then make it so god damned it.
-								temp = (temp==0) ? 1 : temp;
-								stemp[temp-1] = (stemp[temp-1]<' ') ? ' ' : (stemp[temp-1]>'z') ? 'z' : stemp[temp-1]; //delimit character range before.
-
-								if (stemp[temp-1] == tolower(stemp[temp-1]))
-								{
-									if (stemp[temp-1] == toupper(stemp[temp-1])) //if == tolower AND toupper, not 'a-z' or 'A-Z'
-									{
-										stemp[temp-1] = 'a';
-									}
-									else
-										stemp[temp-1] = toupper(stemp[temp-1]);
-								}
-								else
-								{
-									stemp[temp-1] = tolower(stemp[temp-1]);
-								}
-								break;
-#else
 							case ' ':
 							case '-':
 							case '.':
@@ -1723,7 +1635,6 @@ void JE_highScoreCheck( void )
 									temp++;
 								}
 								break;
-#endif
 							case SDLK_BACKSPACE:
 							case SDLK_DELETE:
 								if (temp)
@@ -1732,18 +1643,11 @@ void JE_highScoreCheck( void )
 									stemp[temp] = ' ';
 								}
 								break;
-#ifdef TARGET_DINGUX
-							case SDLK_LALT:
-#endif
 							case SDLK_ESCAPE:
 								quit = true;
 								cancel = true;
 								break;
-#ifdef TARGET_DINGUX
-							case SDLK_LCTRL:
-#else
 							case SDLK_RETURN:
-#endif
 								quit = true;
 								break;
 						}
@@ -2528,63 +2432,10 @@ void JE_operation( JE_byte slot )
 			}
 			else if (newkey)
 			{
-#ifndef TARGET_DINGUX //ok, you win gcc.
 				bool validkey = false;
-#endif
 				lastkey_char = toupper(lastkey_char);
 				switch ((lastkey_sym < 255) ? lastkey_char : lastkey_sym)
 				{
-#ifdef TARGET_DINGUX
-					case SDLK_UP:
-						temp = (temp==0) ? 1 : temp;
-
-						stemp[temp-1]++;
-						stemp[temp-1] = (stemp[temp-1]<' ') ? ' ' : (stemp[temp-1]>'z') ? ' ' : stemp[temp-1]; //delimit character range
-						JE_playSampleNum(S_CLICK);
-						break;
-					case SDLK_DOWN:
-						temp = (temp==0) ? 1 : temp;
-
-						stemp[temp-1]--;
-						stemp[temp-1] = (stemp[temp-1]<' ') ? 'z' : (stemp[temp-1]>'z') ? 'z' : stemp[temp-1]; //delimit character range
-						JE_playSampleNum(S_CLICK);
-						break;
-
-					case SDLK_LEFT:
-						if (temp > 0) {
-							temp--;
-							stemp[temp] = ' ';
-							JE_playSampleNum(S_CURSOR);
-						}
-						break;
-					case SDLK_RIGHT:
-						if (temp < 15) {
-							temp++;
-							JE_playSampleNum(S_CURSOR);
-						}
-						break;
-					case SDLK_LSHIFT:
-						//Change character case. If not 'a-z' or 'A-Z', then make it so god damned it.
-						temp = (temp==0) ? 1 : temp;
-						stemp[temp-1] = (stemp[temp-1]<' ') ? ' ' : (stemp[temp-1]>'z') ? 'z' : stemp[temp-1]; //delimit character range before.
-
-						if (stemp[temp-1] == tolower(stemp[temp-1]))
-						{
-							if (stemp[temp-1] == toupper(stemp[temp-1])) //if == tolower AND toupper, not 'a-z' or 'A-Z'
-							{
-								stemp[temp-1] = 'a';
-							}
-							else
-								stemp[temp-1] = toupper(stemp[temp-1]);
-						}
-						else
-						{
-							stemp[temp-1] = tolower(stemp[temp-1]);
-						}
-
-						JE_playSampleNum(S_CLICK);
-						break;
-#else
 					case ' ':
 					case '-':
 					case '.':
@@ -2616,7 +2467,6 @@ void JE_operation( JE_byte slot )
 							temp++;
 						}
 						break;
-#endif
 					case SDLK_BACKSPACE:
 					case SDLK_DELETE:
 						if (temp)
@@ -2626,18 +2476,11 @@ void JE_operation( JE_byte slot )
 							JE_playSampleNum(S_CLICK);
 						}
 						break;
-#ifdef TARGET_DINGUX
-					case SDLK_LALT:
-#endif
 					case SDLK_ESCAPE:
 						quit = true;
 						JE_playSampleNum(S_SPRING);
 						break;
-#ifdef TARGET_DINGUX
-					case SDLK_LCTRL:
-#else
 					case SDLK_RETURN:
-#endif
 						quit = true;
 						JE_saveGame(slot, stemp);
 						JE_playSampleNum(S_SELECT);
@@ -2911,11 +2754,7 @@ void JE_mainKeyboardInput( void )
 	pause_pressed = pause_pressed || keysactive[SDLK_p];
 
 	/* in-game setup */
-#ifdef TARGET_DINGUX
-	ingamemenu_pressed = ingamemenu_pressed || keysactive[SDLK_RETURN];
-#else
 	ingamemenu_pressed = ingamemenu_pressed || keysactive[SDLK_ESCAPE];
-#endif
 
 	if (keysactive[SDLK_BACKSPACE])
 	{

@@ -72,11 +72,7 @@ bool select_gameplay( void )
 				JE_playSampleNum(S_CURSOR);
 				break;
 
-#ifdef TARGET_DINGUX
-			case SDLK_LCTRL:
-#else
 			case SDLK_RETURN:
-#endif
 				if (gameplay == GAMEPLAY_NAME_COUNT - 1)
 				{
 					JE_playSampleNum(S_SPRING);
@@ -91,9 +87,6 @@ bool select_gameplay( void )
 				twoPlayerMode = (gameplay == GAMEPLAY_NAME_COUNT - 2);
 				return true;
 
-#ifdef TARGET_DINGUX
-			case SDLK_LALT:
-#endif
 			case SDLK_ESCAPE:
 				JE_playSampleNum(S_SPRING);
 				/* fading handled elsewhere
@@ -154,11 +147,7 @@ bool select_episode( void )
 				JE_playSampleNum(S_CURSOR);
 				break;
 
-#ifdef TARGET_DINGUX
-			case SDLK_LCTRL:
-#else
 			case SDLK_RETURN:
-#endif
 				if (!episodeAvail[episode - 1])
 				{
 					JE_playSampleNum(S_SPRING);
@@ -171,9 +160,6 @@ bool select_episode( void )
 				initial_episode_num = episodeNum;
 				return true;
 
-#ifdef TARGET_DINGUX
-			case SDLK_LALT:
-#endif
 			case SDLK_ESCAPE:
 				JE_playSampleNum(S_SPRING);
 				/* fading handled elsewhere
@@ -246,11 +232,7 @@ bool select_difficulty( void )
 				JE_playSampleNum(S_CURSOR);
 				break;
 
-#ifdef TARGET_DINGUX
-			case SDLK_LCTRL:
-#else
 			case SDLK_RETURN:
-#endif
 				JE_playSampleNum(S_SELECT);
 				/* fading handled elsewhere
 				fade_black(10); */
@@ -263,9 +245,6 @@ bool select_difficulty( void )
 				}
 				return true;
 
-#ifdef TARGET_DINGUX
-			case SDLK_LALT:
-#endif
 			case SDLK_ESCAPE:
 				JE_playSampleNum(S_SPRING);
 				/* fading handled elsewhere
