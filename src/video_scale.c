@@ -37,14 +37,8 @@ uint scaler;
 const struct Scalers scalers[] =
 {
 	{ 1 * vga_width, 1 * vga_height, nn_16,      "None" },
-	{ 2 * vga_width, 2 * vga_height, nn_16,      "2x" },
 	{ 2 * vga_width, 2 * vga_height, scale2x_16, "Scale2x" },
-	{ 2 * vga_width, 2 * vga_height, NULL,       "hq2x" },
-	{ 3 * vga_width, 3 * vga_height, nn_16,      "3x" },
-	{ 3 * vga_width, 3 * vga_height, scale3x_16, "Scale3x" },
-	{ 3 * vga_width, 3 * vga_height, NULL,       "hq3x" },
-	{ 4 * vga_width, 4 * vga_height, nn_16,      "4x" },
-	{ 4 * vga_width, 4 * vga_height, NULL,       "hq4x" },
+	{ 3 * vga_width, 3 * vga_height, scale3x_16, "Scale3x" }
 };
 const uint scalers_count = COUNTOF(scalers);
 
