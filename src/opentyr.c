@@ -273,36 +273,38 @@ void opentyrian_menu( void )
 	} while (!quit);
 }
 
-int main( int argc, char *argv[] )
+static void retro_init(void)
 {
-	mt_srand(time(NULL));
+   mt_srand(time(NULL));
 
-	printf("\nWelcome to... >> %s %s <<\n\n", opentyrian_str, opentyrian_version);
+   printf("\nWelcome to... >> %s %s <<\n\n", opentyrian_str, opentyrian_version);
 
-	printf("Copyright (C) 2007-2013 The OpenTyrian Development Team\n\n");
+   printf("Copyright (C) 2007-2013 The OpenTyrian Development Team\n\n");
 
-	printf("This program comes with ABSOLUTELY NO WARRANTY.\n");
-	printf("This is free software, and you are welcome to redistribute it\n");
-	printf("under certain conditions.  See the file GPL.txt for details.\n\n");
+   printf("This program comes with ABSOLUTELY NO WARRANTY.\n");
+   printf("This is free software, and you are welcome to redistribute it\n");
+   printf("under certain conditions.  See the file GPL.txt for details.\n\n");
+}
 
-	if (SDL_Init(0))
-	{
-		printf("Failed to initialize SDL: %s\n", SDL_GetError());
-		return -1;
-	}
+static bool retro_load_game(int argc, char *argv[] )
+{
+   if (SDL_Init(0))
+   {
+      printf("Failed to initialize SDL: %s\n", SDL_GetError());
+      return false;
+   }
 
-	JE_loadConfiguration();
+   JE_loadConfiguration();
 
-	xmas = xmas_time();  // arg handler may override
+   xmas = xmas_time();  // arg handler may override
+   JE_paramCheck(argc, argv);
 
-	JE_paramCheck(argc, argv);
+   JE_scanForEpisodes();
 
-	JE_scanForEpisodes();
-
-	init_video();
-	init_keyboard();
-	init_joysticks();
-	printf("assuming mouse detected\n"); // SDL can't tell us if there isn't one
+   init_video();
+   init_keyboard();
+   init_joysticks();
+   printf("assuming mouse detected\n"); // SDL can't tell us if there isn't one
 
 	if (xmas && (!dir_file_exists(data_dir(), "tyrianc.shp") || !dir_file_exists(data_dir(), "voicesc.snd")))
 	{
@@ -369,26 +371,51 @@ int main( int argc, char *argv[] )
 		intro_logos();
 #endif
 
-	for (; ; )
-	{
-		JE_initPlayerData();
-		JE_sortHighScores();
+   return true;
+}
 
-		if (JE_titleScreen(true))
-			break;  // user quit from title screen
+static void retro_run(void)
+{
+   for (; ; )
+   {
+      JE_initPlayerData();
+      JE_sortHighScores();
 
-		if (loadDestruct)
-		{
-			JE_destructGame();
-			loadDestruct = false;
-		}
-		else
-		{
-			JE_main();
-		}
-	}
+      if (JE_titleScreen(true))
+         break;  // user quit from title screen
 
+      if (loadDestruct)
+      {
+         JE_destructGame();
+         loadDestruct = false;
+      }
+      else
+      {
+         JE_main();
+      }
+   }
+}
+
+static void retro_deinit(void)
+{
 	JE_tyrianHalt(0);
+}
+
+static void retro_unload_game(void)
+{
+}
+
+int main( int argc, char *argv[] )
+{
+   retro_init();
+
+   retro_load_game(argc, argv);
+
+   retro_run();
+
+   retro_deinit();
+
+   retro_unload_game();
 
 	return 0;
 }
