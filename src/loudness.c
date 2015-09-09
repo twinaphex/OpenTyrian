@@ -23,6 +23,8 @@
 #include "opentyr.h"
 #include "params.h"
 
+#define BYTES_PER_SAMPLE 2
+
 float music_volume = 0, sample_volume = 0;
 
 bool music_stopped = true;
@@ -58,7 +60,7 @@ bool init_audio( void )
 	SDL_AudioSpec ask, got;
 	
 	ask.freq = freq;
-	ask.format = (BYTES_PER_SAMPLE == 2) ? AUDIO_S16SYS : AUDIO_S8;
+	ask.format = AUDIO_S16SYS;
 	ask.channels = 1;
 	ask.samples = 2048;
 	ask.callback = audio_cb;
@@ -144,13 +146,8 @@ void audio_cb( void *user_data, unsigned char *sdl_buffer, int howmuch )
 			unsigned int qu = ((unsigned)howmuch > channel_len[ch] ? channel_len[ch] : (unsigned)howmuch) / BYTES_PER_SAMPLE;
 			for (unsigned int smp = 0; smp < qu; smp++)
 			{
-#if (BYTES_PER_SAMPLE == 2)
 				Sint32 clip = (Sint32)feedme[smp] + (Sint32)(channel_pos[ch][smp] * volume);
 				feedme[smp] = (clip > 0x7fff) ? 0x7fff : (clip <= -0x8000) ? -0x8000 : (Sint16)clip;
-#else  /* BYTES_PER_SAMPLE */
-				Sint16 clip = (Sint16)feedme[smp] + (Sint16)(channel_pos[ch][smp] * volume);
-				feedme[smp] = (clip > 0x7f) ? 0x7f : (clip <= -0x80) ? -0x80 : (Sint8)clip;
-#endif  /* BYTES_PER_SAMPLE */
 			}
 			
 			channel_pos[ch] += qu;
@@ -276,11 +273,7 @@ void JE_multiSamplePlay(JE_byte *buffer, JE_word size, JE_byte chan, JE_byte vol
 	{
 		for (int ex = 0; ex < SAMPLE_SCALING; ex++)
 		{
-#if (BYTES_PER_SAMPLE == 2)
 			channel_buffer[chan][(i * SAMPLE_SCALING) + ex] = (Sint8)buffer[i] << 8;
-#else  /* BYTES_PER_SAMPLE */
-			channel_buffer[chan][(i * SAMPLE_SCALING) + ex] = (Sint8)buffer[i];
-#endif  /* BYTES_PER_SAMPLE */
 		}
 	}
 

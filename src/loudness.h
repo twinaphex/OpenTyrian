@@ -30,7 +30,6 @@
 
 #define SAMPLE_SCALING OUTPUT_QUALITY
 #define SAMPLE_TYPE Bit16s
-#define BYTES_PER_SAMPLE 2
 
 extern float music_volume, sample_volume;
 
