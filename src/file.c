@@ -122,7 +122,7 @@ long ftell_eof( FILE *f )
 	return size;
 }
 
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+#ifdef MSB_FIRST
 // endian-swapping fread
 size_t efread( void *buffer, size_t size, size_t num, FILE *stream )
 {
