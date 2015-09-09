@@ -41,7 +41,8 @@ enum
    JE_START_LEVEL,
    JE_LOOP,
    JE_STARTLEVEL,
-   JE_RETURN
+   JE_RETURN,
+   JE_QUIT
 };
 
 extern boss_bar_t boss_bar[2];

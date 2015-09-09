@@ -26,6 +26,7 @@
 #include "joystick.h"
 #include "keyboard.h"
 #include "lds_play.h"
+#include "destruct.h"
 #include "loudness.h"
 #include "lvllib.h"
 #include "menus.h"
@@ -2380,7 +2381,19 @@ int JE_main( int ret )
    switch (ret)
    {
       case JE_NONE:
-         break;
+         JE_initPlayerData();
+         JE_sortHighScores();
+
+         if (JE_titleScreen(true))
+            return JE_QUIT; /* user quit from title screen */
+
+         if (loadDestruct)
+         {
+            JE_destructGame();
+            loadDestruct = false;
+            break;
+         }
+         return JE_PREINIT;
       case JE_START_LEVEL:
          if (JE_main_init() == -1)
             return JE_RETURN;
