@@ -617,102 +617,82 @@ draw_enemy_end:
 	player[0].x += 25;
 }
 
-void JE_main( void )
+static int JE_main_init ( void )
 {
-	char buffer[256];
+   if (galagaMode)
+      twoPlayerMode = false;
 
-	int lastEnemyOnScreen;
+   JE_clearKeyboard();
 
-	/* NOTE: BEGIN MAIN PROGRAM HERE AFTER LOADING A GAME OR STARTING A NEW ONE */
+   free_sprite2s(&eShapes[0]);
+   free_sprite2s(&eShapes[1]);
+   free_sprite2s(&eShapes[2]);
+   free_sprite2s(&eShapes[3]);
 
-	/* ----------- GAME ROUTINES ------------------------------------- */
-	/* We need to jump to the beginning to make space for the routines */
-	/* --------------------------------------------------------------- */
-	goto start_level_first;
+   /* Normal speed */
+   if (fastPlay != 0)
+   {
+      smoothScroll = true;
+      speed = 0x4300;
+      JE_resetTimerInt();
+      JE_setTimerInt();
+   }
 
+   if (play_demo || record_demo)
+   {
+      if (demo_file)
+      {
+         fclose(demo_file);
+         demo_file = NULL;
+      }
 
-	/*------------------------------GAME LOOP-----------------------------------*/
+      if (play_demo)
+      {
+         stop_song();
+         fade_black(10);
 
+         wait_noinput(true, true, true);
+      }
+   }
 
-	/* Startlevel is called after a previous level is over.  If the first level
-	   is started for a gaming session, startlevelfirst is called instead and
-	   this code is skipped.  The code here finishes the level and prepares for
-	   the loadmap function. */
+   difficultyLevel = oldDifficultyLevel;   /*Return difficulty to normal*/
 
-start_level:
+   if (!play_demo)
+   {
+      if ((!all_players_dead() || normalBonusLevelCurrent || bonusLevelCurrent) && !playerEndLevel)
+      {
+         mainLevel = nextLevel;
+         JE_endLevelAni();
 
-	if (galagaMode)
-		twoPlayerMode = false;
+         fade_song();
+      }
+      else
+      {
+         fade_song();
+         fade_black(10);
 
-	JE_clearKeyboard();
+         JE_loadGame(twoPlayerMode ? 22 : 11);
+         if (doNotSaveBackup)
+         {
+            superTyrian = false;
+            onePlayerAction = false;
+            player[0].items.super_arcade_mode = SA_NONE;
+         }
+         if (bonusLevelCurrent && !playerEndLevel)
+         {
+            mainLevel = nextLevel;
+         }
+      }
+   }
+   doNotSaveBackup = false;
 
-	free_sprite2s(&eShapes[0]);
-	free_sprite2s(&eShapes[1]);
-	free_sprite2s(&eShapes[2]);
-	free_sprite2s(&eShapes[3]);
+   if (play_demo)
+      return -1;
+   return 0;
+}
 
-	/* Normal speed */
-	if (fastPlay != 0)
-	{
-		smoothScroll = true;
-		speed = 0x4300;
-		JE_resetTimerInt();
-		JE_setTimerInt();
-	}
-
-	if (play_demo || record_demo)
-	{
-		if (demo_file)
-		{
-			fclose(demo_file);
-			demo_file = NULL;
-		}
-
-		if (play_demo)
-		{
-			stop_song();
-			fade_black(10);
-
-			wait_noinput(true, true, true);
-		}
-	}
-
-	difficultyLevel = oldDifficultyLevel;   /*Return difficulty to normal*/
-
-	if (!play_demo)
-	{
-		if ((!all_players_dead() || normalBonusLevelCurrent || bonusLevelCurrent) && !playerEndLevel)
-		{
-			mainLevel = nextLevel;
-			JE_endLevelAni();
-
-			fade_song();
-		}
-		else
-		{
-			fade_song();
-			fade_black(10);
-
-			JE_loadGame(twoPlayerMode ? 22 : 11);
-			if (doNotSaveBackup)
-			{
-				superTyrian = false;
-				onePlayerAction = false;
-				player[0].items.super_arcade_mode = SA_NONE;
-			}
-			if (bonusLevelCurrent && !playerEndLevel)
-			{
-				mainLevel = nextLevel;
-			}
-		}
-	}
-	doNotSaveBackup = false;
-
-	if (play_demo)
-		return;
-
-start_level_first:
-
+static int JE_main_init2 ( void )
+{
 	set_volume(tyrMusicVolume, fxVolume);
 
 	endLevel = false;
@@ -724,7 +704,7 @@ start_level_first:
 	JE_loadMap();
 
 	if (mainLevel == 0)  // if quit itemscreen
-		return;          // back to titlescreen
+		return -1;          // back to titlescreen
 
 	fade_song();
 
@@ -866,7 +846,6 @@ start_level_first:
 
 	background2notTransparent = false;
 
-	uint old_weapon_bar[2] = { 0, 0 };  // only redrawn when they change
 
 	/* Initially erase power bars */
 	lastPower = power / 10;
@@ -1070,6 +1049,40 @@ start_level_first:
 	BKwrap2 = BKwrap2to = &megaData2.mainmap[1][0];
 	BKwrap3 = BKwrap3to = &megaData3.mainmap[1][0];
 
+   return 0;
+}
+
+void JE_main( void )
+{
+	char buffer[256];
+   uint old_weapon_bar[2] = { 0, 0 };  // only redrawn when they change
+
+	int lastEnemyOnScreen;
+
+	/* NOTE: BEGIN MAIN PROGRAM HERE AFTER LOADING A GAME OR STARTING A NEW ONE */
+
+	/* ----------- GAME ROUTINES ------------------------------------- */
+	/* We need to jump to the beginning to make space for the routines */
+	/* --------------------------------------------------------------- */
+	goto start_level_first;
+
+
+	/*------------------------------GAME LOOP-----------------------------------*/
+
+
+	/* Startlevel is called after a previous level is over.  If the first level
+	   is started for a gaming session, startlevelfirst is called instead and
+	   this code is skipped.  The code here finishes the level and prepares for
+	   the loadmap function. */
+
+start_level:
+   if (JE_main_init() == -1)
+      return;
+
+start_level_first:
+   if (JE_main_init2() == -1)
+      return;
+
 level_loop:
 
 	//tempScreenSeg = game_screen; /* side-effect of game_screen */
@@ -1255,7 +1268,6 @@ level_loop:
 
 	if (isNetworkGame && reallyEndLevel)
 		goto start_level;
-
 
 	/* SMOOTHIES! */
 	JE_checkSmoothies();
@@ -2386,9 +2398,7 @@ draw_player_shot_loop_end:
 	JE_handleChat();
 
 	if (reallyEndLevel)
-	{
 		goto start_level;
-	}
 	goto level_loop;
 }
 
