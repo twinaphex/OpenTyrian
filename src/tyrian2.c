@@ -2383,10 +2383,10 @@ int JE_main( int ret )
          break;
       case JE_START_LEVEL:
          if (JE_main_init() == -1)
-            return JE_QUIT;
+            return JE_RETURN;
       case JE_PREINIT:
          if (JE_main_init2() == -1)
-            return JE_QUIT;
+            return JE_RETURN;
       case JE_LOOP:
          ret = JE_main_loop();
          switch (ret)
@@ -2398,7 +2398,7 @@ int JE_main( int ret )
          }
    }
 
-   return JE_QUIT;
+   return JE_RETURN;
 }
 
 /* --- Load Level/Map Data --- */

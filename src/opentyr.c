@@ -399,7 +399,7 @@ static void retro_run(void)
          {
             ret = JE_main(ret);
 
-            if (ret == JE_QUIT)
+            if (ret == JE_RETURN)
                break;
          }
       }
