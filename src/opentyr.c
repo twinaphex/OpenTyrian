@@ -276,14 +276,6 @@ void opentyrian_menu( void )
 static void retro_init(void)
 {
    mt_srand(time(NULL));
-
-   printf("\nWelcome to... >> %s %s <<\n\n", opentyrian_str, opentyrian_version);
-
-   printf("Copyright (C) 2007-2013 The OpenTyrian Development Team\n\n");
-
-   printf("This program comes with ABSOLUTELY NO WARRANTY.\n");
-   printf("This is free software, and you are welcome to redistribute it\n");
-   printf("under certain conditions.  See the file GPL.txt for details.\n\n");
 }
 
 static bool retro_load_game(int argc, char *argv[] )
