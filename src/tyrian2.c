@@ -2375,42 +2375,30 @@ draw_player_shot_loop_end:
    return 0;
 }
 
-void JE_main( void )
+int JE_main( int ret )
 {
-   int ret = 0;
-	/* NOTE: BEGIN MAIN PROGRAM HERE AFTER LOADING A GAME OR STARTING A NEW ONE */
-
-	/* ----------- GAME ROUTINES ------------------------------------- */
-	/* We need to jump to the beginning to make space for the routines */
-	/* --------------------------------------------------------------- */
-	goto start_level_first;
-
-
-	/*------------------------------GAME LOOP-----------------------------------*/
-
-
-	/* Startlevel is called after a previous level is over.  If the first level
-	   is started for a gaming session, startlevelfirst is called instead and
-	   this code is skipped.  The code here finishes the level and prepares for
-	   the loadmap function. */
-
-start_level:
-   if (JE_main_init() == -1)
-      return;
-
-start_level_first:
-   if (JE_main_init2() == -1)
-      return;
-
-level_loop:
-   ret = JE_main_loop();
    switch (ret)
    {
-      case 0:
-         goto level_loop;
-      case 1:
-         goto start_level;
+      case JE_NONE:
+         break;
+      case JE_START_LEVEL:
+         if (JE_main_init() == -1)
+            return JE_QUIT;
+      case JE_PREINIT:
+         if (JE_main_init2() == -1)
+            return JE_QUIT;
+      case JE_LOOP:
+         ret = JE_main_loop();
+         switch (ret)
+         {
+            case 0:
+               return JE_LOOP;
+            case 1:
+               return JE_START_LEVEL;
+         }
    }
+
+   return JE_QUIT;
 }
 
 /* --- Load Level/Map Data --- */

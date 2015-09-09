@@ -34,6 +34,16 @@ typedef struct
 }
 boss_bar_t;
 
+enum
+{
+   JE_NONE = 0,
+   JE_PREINIT,
+   JE_START_LEVEL,
+   JE_LOOP,
+   JE_STARTLEVEL,
+   JE_QUIT
+};
+
 extern boss_bar_t boss_bar[2];
 
 extern char tempStr[31];
@@ -55,7 +65,7 @@ Sint16 JE_newEnemy( int enemyOffset, Uint16 eDatI, Sint16 uniqueShapeTableI );
 void JE_drawEnemy( int enemyOffset );
 void JE_starShowVGA( void );
 
-void JE_main( void );
+int JE_main( int ret );
 int JE_main_init ( void );
 int JE_main_init2 ( void );
 int JE_main_loop ( void );

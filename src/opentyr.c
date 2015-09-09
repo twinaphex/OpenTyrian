@@ -376,6 +376,8 @@ static bool retro_load_game(int argc, char *argv[] )
 
 static void retro_run(void)
 {
+   int ret;
+
    for (; ; )
    {
       JE_initPlayerData();
@@ -384,6 +386,8 @@ static void retro_run(void)
       if (JE_titleScreen(true))
          break;  // user quit from title screen
 
+      ret = JE_PREINIT;
+
       if (loadDestruct)
       {
          JE_destructGame();
@@ -391,7 +395,13 @@ static void retro_run(void)
       }
       else
       {
-         JE_main();
+         for (;;)
+         {
+            ret = JE_main(ret);
+
+            if (ret == JE_QUIT)
+               break;
+         }
       }
    }
 }
