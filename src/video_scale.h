@@ -28,7 +28,7 @@ typedef void (*ScalerFunction)( SDL_Surface *dst, SDL_Surface *src );
 struct Scalers
 {
 	int width, height;
-	ScalerFunction scaler8, scaler16, scaler32;
+	ScalerFunction scaler16;
 	const char *name;
 };
 

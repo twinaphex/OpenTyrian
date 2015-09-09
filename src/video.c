@@ -63,33 +63,12 @@ void init_video( void )
 
 int can_init_scaler( unsigned int new_scaler, bool fullscreen )
 {
+   (void)fullscreen;
+
 	if (new_scaler >= scalers_count)
 		return false;
 	
-	int w = scalers[new_scaler].width,
-	    h = scalers[new_scaler].height;
-	int flags = SDL_SWSURFACE | SDL_HWPALETTE | (fullscreen ? SDL_FULLSCREEN : 0);
-	
-	// test each bitdepth
-	for (uint bpp = 32; bpp > 0; bpp -= 8)
-	{
-		uint temp_bpp = SDL_VideoModeOK(w, h, bpp, flags);
-		
-		if ((temp_bpp == 32 && scalers[new_scaler].scaler32) ||
-		    (temp_bpp == 16 && scalers[new_scaler].scaler16) ||
-		    (temp_bpp == 8  && scalers[new_scaler].scaler8 ))
-		{
-			return temp_bpp;
-		}
-		else if (temp_bpp == 24 && scalers[new_scaler].scaler32)
-		{
-			// scalers don't support 24 bpp because it's a pain
-			// so let SDL handle the conversion
-			return 32;
-		}
-	}
-	
-	return 0;
+   return 16;
 }
 
 bool init_scaler( unsigned int new_scaler, bool fullscreen )
@@ -118,22 +97,7 @@ bool init_scaler( unsigned int new_scaler, bool fullscreen )
 	
 	scaler = new_scaler;
 	fullscreen_enabled = fullscreen;
-	
-	switch (bpp)
-	{
-	case 32:
-		scaler_function = scalers[scaler].scaler32;
-		break;
-	case 16:
-		scaler_function = scalers[scaler].scaler16;
-		break;
-	case 8:
-		scaler_function = scalers[scaler].scaler8;
-		break;
-	default:
-		scaler_function = NULL;
-		break;
-	}
+   scaler_function = scalers[scaler].scaler16;
 
 	if (scaler_function == NULL)
 	{
