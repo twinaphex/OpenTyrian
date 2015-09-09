@@ -27,6 +27,14 @@ typedef struct LR_Surface
    SDL_Surface *surf;
 } LR_Surface;
 
-#define SET_COLORFORMAT(surface, r, g, b) ((r >> surface->format->Rloss) << surface->format->Rshift | (g >> surface->format->Gloss) << surface->format->Gshift | (b >> surface->format->Bloss) << surface->format->Bshift | surface->format->Amask)
+#define RED_EXPAND   3
+#define GREEN_EXPAND 2
+#define BLUE_EXPAND  3
+
+#define RED_SHIFT   11
+#define GREEN_SHIFT 5
+#define BLUE_SHIFT  0
+
+#define SET_COLORFORMAT(r, g, b) ((r >> RED_EXPAND) << RED_SHIFT | (g >> GREEN_EXPAND) << GREEN_SHIFT | (b >> BLUE_EXPAND) << BLUE_SHIFT)
 
 #endif
