@@ -27,4 +27,6 @@ typedef struct LR_Surface
    SDL_Surface *surf;
 } LR_Surface;
 
+#define SET_COLORFORMAT(surface, r, g, b) ((r >> surface->format->Rloss) << surface->format->Rshift | (g >> surface->format->Gloss) << surface->format->Gshift | (b >> surface->format->Bloss) << surface->format->Bshift | surface->format->Amask)
+
 #endif
