@@ -27,6 +27,8 @@
 
 #include <assert.h>
 
+#define DST_BPP 2
+
 static void nn_16( SDL_Surface *src_surface, SDL_Surface *dst_surface );
 
 static void scale2x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface );
@@ -60,7 +62,6 @@ void nn_16( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 	      *dst = dst_surface->pixels, *dst_temp;
 	int src_pitch = src_surface->pitch,
 	    dst_pitch = dst_surface->pitch;
-	const int dst_Bpp = 2;         // dst_surface->format->BytesPerPixel
 	
 	const int height = vga_height, // src_surface->h
 	          width = vga_width,   // src_surface->w
@@ -83,7 +84,7 @@ void nn_16( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 			for (int z = scale; z > 0; z--)
 			{
 				*(Uint16 *)dst = rgb_palette[*src];
-				dst += dst_Bpp;
+				dst += DST_BPP;
 			}
 			src++;
 		}
@@ -109,7 +110,6 @@ void scale2x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 	      *dst = dst_surface->pixels, *dst_temp;
 	int src_pitch = src_surface->pitch,
 	    dst_pitch = dst_surface->pitch;
-	const int dst_Bpp = 2;         // dst_surface->format->BytesPerPixel
 	
 	const int height = vga_height, // src_surface->h
 	          width = vga_width;   // src_surface->w
@@ -143,12 +143,12 @@ void scale2x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 			}
 			
 			*(Uint16 *)dst = E0;
-			*(Uint16 *)(dst + dst_Bpp) = E1;
+			*(Uint16 *)(dst + DST_BPP) = E1;
 			*(Uint16 *)(dst + dst_pitch) = E2;
-			*(Uint16 *)(dst + dst_pitch + dst_Bpp) = E3;
+			*(Uint16 *)(dst + dst_pitch + DST_BPP) = E3;
 			
 			src++;
-			dst += 2 * dst_Bpp;
+			dst += 2 * DST_BPP;
 		}
 		
 		src = src_temp + src_pitch;
@@ -162,7 +162,6 @@ void scale3x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 	      *dst = dst_surface->pixels, *dst_temp;
 	int src_pitch = src_surface->pitch,
 	    dst_pitch = dst_surface->pitch;
-	const int dst_Bpp = 2;         // dst_surface->format->BytesPerPixel
 	
 	const int height = vga_height, // src_surface->h
 	          width = vga_width;   // src_surface->w
@@ -205,17 +204,17 @@ void scale3x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 			}
 			
 			*(Uint16 *)dst = E0;
-			*(Uint16 *)(dst + dst_Bpp) = E1;
-			*(Uint16 *)(dst + 2 * dst_Bpp) = E2;
+			*(Uint16 *)(dst + DST_BPP) = E1;
+			*(Uint16 *)(dst + 2 * DST_BPP) = E2;
 			*(Uint16 *)(dst + dst_pitch) = E3;
-			*(Uint16 *)(dst + dst_pitch + dst_Bpp) = E4;
-			*(Uint16 *)(dst + dst_pitch + 2 * dst_Bpp) = E5;
+			*(Uint16 *)(dst + dst_pitch + DST_BPP) = E4;
+			*(Uint16 *)(dst + dst_pitch + 2 * DST_BPP) = E5;
 			*(Uint16 *)(dst + 2 * dst_pitch) = E6;
-			*(Uint16 *)(dst + 2 * dst_pitch + dst_Bpp) = E7;
-			*(Uint16 *)(dst + 2 * dst_pitch + 2 * dst_Bpp) = E8;
+			*(Uint16 *)(dst + 2 * dst_pitch + DST_BPP) = E7;
+			*(Uint16 *)(dst + 2 * dst_pitch + 2 * DST_BPP) = E8;
 			
 			src++;
-			dst += 3 * dst_Bpp;
+			dst += 3 * DST_BPP;
 		}
 		
 		src = src_temp + src_pitch;
