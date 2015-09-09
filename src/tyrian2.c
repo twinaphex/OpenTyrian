@@ -617,7 +617,7 @@ draw_enemy_end:
 	player[0].x += 25;
 }
 
-static int JE_main_init ( void )
+int JE_main_init ( void )
 {
    if (galagaMode)
       twoPlayerMode = false;
@@ -691,7 +691,7 @@ static int JE_main_init ( void )
    return 0;
 }
 
-static int JE_main_init2 ( void )
+int JE_main_init2 ( void )
 {
 	set_volume(tyrMusicVolume, fxVolume);
 
@@ -1052,7 +1052,7 @@ static int JE_main_init2 ( void )
    return 0;
 }
 
-static int JE_main_loop ( void )
+int JE_main_loop ( void )
 {
 	char buffer[256];
 	int lastEnemyOnScreen;

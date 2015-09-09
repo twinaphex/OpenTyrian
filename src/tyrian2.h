@@ -56,6 +56,9 @@ void JE_drawEnemy( int enemyOffset );
 void JE_starShowVGA( void );
 
 void JE_main( void );
+int JE_main_init ( void );
+int JE_main_init2 ( void );
+int JE_main_loop ( void );
 void JE_loadMap( void );
 bool JE_titleScreen( JE_boolean animate );
 void JE_readTextSync( void );
