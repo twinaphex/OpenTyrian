@@ -82,7 +82,7 @@ void jukebox( void )
 
 		setdelay(1);
 
-		SDL_FillRect(VGAScreenSeg, NULL, 0);
+		SDL_FillRect(VGAScreenSeg->surf, NULL, 0);
 
 		// starlib input needs to be rewritten
 		JE_starlib_main();
@@ -99,7 +99,7 @@ void jukebox( void )
 			else
 				snprintf(buffer, sizeof(buffer), "%d %s", song_playing + 1, musicTitle[song_playing]);
 			
-			const int x = VGAScreen->w / 2;
+			const int x = VGAScreen->surf->w / 2;
 			
 			draw_font_hv(VGAScreen, x, 170, "Press ESC to quit the jukebox.",           small_font, centered, 1, 0);
 			draw_font_hv(VGAScreen, x, 180, "Arrow keys change the song being played.", small_font, centered, 1, 0);

@@ -113,7 +113,7 @@ void skip_pascal_string( FILE *f )
 	fseek(f, len, SEEK_CUR);
 }
 
-void JE_helpBox( SDL_Surface *screen,  int x, int y, const char *message, unsigned int boxwidth )
+void JE_helpBox( LR_Surface *screen,  int x, int y, const char *message, unsigned int boxwidth )
 {
 	JE_byte startpos, endpos, pos;
 	JE_boolean endstring;
@@ -167,7 +167,7 @@ void JE_helpBox( SDL_Surface *screen,  int x, int y, const char *message, unsign
 	helpBoxShadeType = FULL_SHADE;
 }
 
-void JE_HBox( SDL_Surface *screen, int x, int y, unsigned int  messagenum, unsigned int boxwidth )
+void JE_HBox( LR_Surface *screen, int x, int y, unsigned int  messagenum, unsigned int boxwidth )
 {
 	JE_helpBox(screen, x, y, helpTxt[messagenum-1], boxwidth);
 }

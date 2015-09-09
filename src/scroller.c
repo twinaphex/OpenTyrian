@@ -167,7 +167,7 @@ void scroller_sine( const struct about_text_type text[] )
 					break;
 				}
 
-				int line_x = VGAScreen->w / 2;
+				int line_x = VGAScreen->surf->w / 2;
 				int line_y = i * LINE_HEIGHT - y;
 
 				// smooths edges on sine-wave text
@@ -186,9 +186,9 @@ void scroller_sine( const struct about_text_type text[] )
 						if (line_y + j >= 10 && line_y + j <= vga_height - 10)
 						{
 							int waver = sinf((((line_y + j) / 2) % 10) / 5.0f * M_PI) * 3;
-							memmove(&((Uint8 *)VGAScreen->pixels)[VGAScreen->pitch * (line_y + j) + waver],
-									&((Uint8 *)VGAScreen->pixels)[VGAScreen->pitch * (line_y + j)],
-									VGAScreen->pitch);
+							memmove(&((Uint8 *)VGAScreen->surf->pixels)[VGAScreen->surf->pitch * (line_y + j) + waver],
+									&((Uint8 *)VGAScreen->surf->pixels)[VGAScreen->surf->pitch * (line_y + j)],
+									VGAScreen->surf->pitch);
 						}
 					}
 				}

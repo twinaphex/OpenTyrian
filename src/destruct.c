@@ -194,7 +194,7 @@ struct destruct_world_s {
 
 	/* Map data & screen pointer */
 	unsigned int baseMap[320];
-	SDL_Surface * VGAScreen;
+	LR_Surface * VGAScreen;
 	struct destruct_wall_s * mapWalls;
 
 	/* Map configuration */
@@ -216,12 +216,12 @@ static void DE_generateBaseTerrain( unsigned int, unsigned int *);
 static void DE_drawBaseTerrain( unsigned int * );
 static void DE_generateUnits( unsigned int * );
 static void DE_generateWalls( struct destruct_world_s * );
-static void DE_generateRings(SDL_Surface *, Uint8 );
+static void DE_generateRings(LR_Surface *, Uint8 );
 static void DE_ResetLevel( void );
 static unsigned int JE_placementPosition( unsigned int, unsigned int, unsigned int * );
 
 //drawing functions
-static void JE_aliasDirt( SDL_Surface * );
+static void JE_aliasDirt( LR_Surface * );
 static void DE_RunTickDrawCrosshairs( void );
 static void DE_RunTickDrawHUD( void );
 static void DE_GravityDrawUnit( enum de_player_t, struct destruct_unit_s * );
@@ -370,7 +370,7 @@ static SDLKey defaultKeyConfig[MAX_PLAYERS][MAX_KEY][MAX_KEY_OPTIONS] =
 
 
 /*** Globals ***/
-static SDL_Surface *destructTempScreen;
+static LR_Surface *destructTempScreen;
 static JE_boolean destructFirstTime;
 
 static struct destruct_config_s config = { 40, 20, 20, 40, 10, false, false, {true, false}, {true, false} };
@@ -761,7 +761,7 @@ static void JE_destructMain( void )
 
 static void JE_introScreen( void )
 {
-	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->h * VGAScreen2->pitch);
+	memcpy(VGAScreen2->surf->pixels, VGAScreen->surf->pixels, VGAScreen2->surf->h * VGAScreen2->surf->pitch);
 	JE_outText(VGAScreen, JE_fontCenter(specialName[7], TINY_FONT), 90, specialName[7], 12, 5);
 	JE_outText(VGAScreen, JE_fontCenter(miscText[64], TINY_FONT), 180, miscText[64], 15, 2);
 	JE_outText(VGAScreen, JE_fontCenter(miscText[65], TINY_FONT), 190, miscText[65], 15, 2);
@@ -776,7 +776,7 @@ static void JE_introScreen( void )
 	}
 
 	fade_black(15);
-	memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->h * VGAScreen->pitch);
+	memcpy(VGAScreen->surf->pixels, VGAScreen2->surf->pixels, VGAScreen->surf->h * VGAScreen->surf->pitch);
 	JE_showVGA();
 }
 
@@ -805,7 +805,7 @@ static enum de_mode_t JE_modeSelect( void )
 	enum de_mode_t mode;
 
 
-	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->h * VGAScreen2->pitch);
+	memcpy(VGAScreen2->surf->pixels, VGAScreen->surf->pixels, VGAScreen2->surf->h * VGAScreen2->surf->pitch);
 	mode = MODE_5CARDWAR;
 
 	// Draw the menu and fade us in
@@ -869,7 +869,7 @@ static enum de_mode_t JE_modeSelect( void )
 	}
 
 	fade_black(15);
-	memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->h * VGAScreen->pitch);
+	memcpy(VGAScreen->surf->pixels, VGAScreen2->surf->pixels, VGAScreen->surf->h * VGAScreen->surf->pitch);
 	JE_showVGA();
 	return(mode);
 }
@@ -930,7 +930,7 @@ static void JE_generateTerrain( void )
 	JE_aliasDirt(world.VGAScreen);
 	JE_showVGA();
 
-	memcpy(destructTempScreen->pixels, VGAScreen->pixels, destructTempScreen->pitch * destructTempScreen->h);
+	memcpy(destructTempScreen->surf->pixels, VGAScreen->surf->pixels, destructTempScreen->surf->pitch * destructTempScreen->surf->h);
 }
 static void DE_generateBaseTerrain( unsigned int mapFlags, unsigned int * baseWorld)
 {
@@ -1125,7 +1125,7 @@ label_outer_break:
 	} while (remainWalls != 0);
 }
 
-static void DE_generateRings( SDL_Surface * screen, Uint8 pixel )
+static void DE_generateRings( LR_Surface * screen, Uint8 pixel )
 {
 	unsigned int i, j, tempSize, rings;
 	int tempPosX1, tempPosY1, tempPosX2, tempPosY2;
@@ -1147,29 +1147,29 @@ static void DE_generateRings( SDL_Surface * screen, Uint8 pixel )
 			if ((tempPosY2 > 12) && (tempPosY2 < 200)
 			 && (tempPosX2 > 0) && (tempPosX2 < 319))
 			{
-				((Uint8 *)screen->pixels)[tempPosX2 + tempPosY2 * screen->pitch] = pixel;
+				((Uint8 *)screen->surf->pixels)[tempPosX2 + tempPosY2 * screen->surf->pitch] = pixel;
 			}
 		}
 	}
 }
 
-static unsigned int aliasDirtPixel(const SDL_Surface * screen, unsigned int x, unsigned int y, const Uint8 * s) {
+static unsigned int aliasDirtPixel(const LR_Surface * screen, unsigned int x, unsigned int y, const Uint8 * s) {
 
 	//A helper function used when aliasing dirt.  That's a messy process;
 	//let's contain the mess here.
 	unsigned int newColor = PIXEL_BLACK;
 
 
-	if ((y > 0) && (*(s - screen->pitch) == PIXEL_DIRT)) { // look up
+	if ((y > 0) && (*(s - screen->surf->pitch) == PIXEL_DIRT)) { // look up
 		newColor += 1;
 	}
-	if ((y < screen->h - 1u) && (*(s + screen->pitch) == PIXEL_DIRT)) { // look down
+	if ((y < screen->surf->h - 1u) && (*(s + screen->surf->pitch) == PIXEL_DIRT)) { // look down
 		newColor += 3;
 	}
 	if ((x > 0) && (*(s - 1) == PIXEL_DIRT)) { // look left
 		newColor += 2;
 	}
-	if ((x < screen->pitch - 1u) && (*(s + 1) == PIXEL_DIRT)) { // look right
+	if ((x < screen->surf->pitch - 1u) && (*(s + 1) == PIXEL_DIRT)) { // look right
 		newColor += 2;
 	}
 	if (newColor != PIXEL_BLACK) {
@@ -1178,7 +1178,7 @@ static unsigned int aliasDirtPixel(const SDL_Surface * screen, unsigned int x, u
 
 	return(PIXEL_BLACK);
 }
-static void JE_aliasDirt( SDL_Surface * screen )
+static void JE_aliasDirt( LR_Surface * screen )
 {
 	/* This complicated looking function goes through the whole screen
 	 * looking for brown pixels which just happen to be next to non-brown
@@ -1188,11 +1188,11 @@ static void JE_aliasDirt( SDL_Surface * screen )
 
 	/* This is a pointer to a screen.  If you don't like pointer arithmetic,
 	 * you won't like this function. */
-	Uint8 *s = screen->pixels;
-	s += 12 * screen->pitch;
+	Uint8 *s = screen->surf->pixels;
+	s += 12 * screen->surf->pitch;
 
-	for (y = 12; y < (unsigned)screen->h; y++) {
-		for (x = 0; x < screen->pitch; x++) {
+	for (y = 12; y < (unsigned)screen->surf->h; y++) {
+		for (x = 0; x < screen->surf->pitch; x++) {
 			if (*s == PIXEL_BLACK) {
 				*s = aliasDirtPixel(screen, x, y, s);
 			}
@@ -1236,8 +1236,8 @@ static bool JE_stabilityCheck( unsigned int x, unsigned int y )
 
 
 	numDirtPixels = 0;
-	s = destructTempScreen->pixels;
-	s += x + (y * destructTempScreen->pitch) - 1;
+	s = destructTempScreen->surf->pixels;
+	s += x + (y * destructTempScreen->surf->pitch) - 1;
 
 	/* Check the 12 pixels on the bottom border of our object */
 	for (i = 0; i < 12; i++)
@@ -1254,15 +1254,15 @@ static bool JE_stabilityCheck( unsigned int x, unsigned int y )
 
 static void JE_tempScreenChecking( void ) /*and copy to vgascreen*/
 {
-	Uint8 *s = VGAScreen->pixels;
-	s += 12 * VGAScreen->pitch;
+	Uint8 *s = VGAScreen->surf->pixels;
+	s += 12 * VGAScreen->surf->pitch;
 
-	Uint8 *temps = destructTempScreen->pixels;
-	temps += 12 * destructTempScreen->pitch;
+	Uint8 *temps = destructTempScreen->surf->pixels;
+	temps += 12 * destructTempScreen->surf->pitch;
 
-	for (int y = 12; y < VGAScreen->h; y++)
+	for (int y = 12; y < VGAScreen->surf->h; y++)
 	{
-		for (int x = 0; x < VGAScreen->pitch; x++)
+		for (int x = 0; x < VGAScreen->surf->pitch; x++)
 		{
 			// This block is what fades out explosions. The palette from 241
 			// to 255 fades from a very dark red to a very bright yellow.
@@ -1375,11 +1375,11 @@ static void JE_superPixel( unsigned int tempPosX, unsigned int tempPosY )
 	Uint8 *s;
 
 
-	maxX = destructTempScreen->pitch;
-	maxY = destructTempScreen->h;
+	maxX = destructTempScreen->surf->pitch;
+	maxY = destructTempScreen->surf->h;
 
-	rowLen = destructTempScreen->pitch;
-	s = destructTempScreen->pixels;
+	rowLen = destructTempScreen->surf->pitch;
+	s = destructTempScreen->surf->pixels;
 	s += (rowLen * (tempPosY - 2)) + (tempPosX - 2);
 
 	for (y = 0; y < 5; y++, s += rowLen - 5)
@@ -1419,7 +1419,7 @@ static void JE_helpScreen( void )
 
 	//JE_getVGA();  didn't do anything anyway?
 	fade_black(15);
-	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->h * VGAScreen2->pitch);
+	memcpy(VGAScreen2->surf->pixels, VGAScreen->surf->pixels, VGAScreen2->surf->h * VGAScreen2->surf->pitch);
 	JE_clr256(VGAScreen);
 
 	for(i = 0; i < 2; i++)
@@ -1443,7 +1443,7 @@ static void JE_helpScreen( void )
 	while (!newkey);
 
 	fade_black(15);
-	memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->h * VGAScreen->pitch);
+	memcpy(VGAScreen->surf->pixels, VGAScreen2->surf->pixels, VGAScreen->surf->h * VGAScreen->surf->pitch);
 	JE_showVGA();
 	fade_palette(colors, 15, 0, 255);
 }
@@ -1454,7 +1454,7 @@ static void JE_pauseScreen( void )
 	set_volume(tyrMusicVolume / 2, fxVolume);
 
 	/* Save our current screen/game world.  We don't want to screw it up while paused. */
-	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->h * VGAScreen2->pitch);
+	memcpy(VGAScreen2->surf->pixels, VGAScreen->surf->pixels, VGAScreen2->surf->h * VGAScreen2->surf->pitch);
 	JE_outText(VGAScreen, JE_fontCenter(miscText[22], TINY_FONT), 90, miscText[22], 12, 5);
 	JE_showVGA();
 
@@ -1466,7 +1466,7 @@ static void JE_pauseScreen( void )
 	while (!newkey);
 
 	/* Restore current screen & volume*/
-	memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->h * VGAScreen->pitch);
+	memcpy(VGAScreen->surf->pixels, VGAScreen2->surf->pixels, VGAScreen->surf->h * VGAScreen->surf->pitch);
 	JE_showVGA();
 
 	set_volume(tyrMusicVolume, fxVolume);
@@ -1878,7 +1878,7 @@ static void DE_RunTickExplosions( void )
 			switch(exploRec[i].exploType)
 			{
 				case EXPL_DIRT:
-					((Uint8 *)destructTempScreen->pixels)[tempPosX + tempPosY * destructTempScreen->pitch] = PIXEL_DIRT;
+					((Uint8 *)destructTempScreen->surf->pixels)[tempPosX + tempPosY * destructTempScreen->surf->pitch] = PIXEL_DIRT;
 					break;
 
 				case EXPL_NORMAL:
@@ -2074,7 +2074,7 @@ static void DE_RunTickShots( void )
 		}
 
 		/* Our last collision check, at least for now.  We hit dirt. */
-		if((((Uint8 *)destructTempScreen->pixels)[tempPosX + tempPosY * destructTempScreen->pitch]) == PIXEL_DIRT)
+		if((((Uint8 *)destructTempScreen->surf->pixels)[tempPosX + tempPosY * destructTempScreen->surf->pitch]) == PIXEL_DIRT)
 		{
 			shotRec[i].isAvailable = true;
 			JE_makeExplosion(tempPosX, tempPosY, shotRec[i].shottype);

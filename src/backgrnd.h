@@ -22,7 +22,7 @@
 #include "opentyr.h"
 
 #include <stdint.h>
-#include "SDL.h"
+#include "surface.h"
 
 extern JE_word backPos, backPos2, backPos3;
 extern JE_word backMove, backMove2, backMove3;
@@ -38,26 +38,26 @@ extern int starfield_speed;
 
 void JE_darkenBackground( JE_word neat );
 
-void blit_background_row( SDL_Surface *surface, int x, int y, Uint8 **map );
-void blit_background_row_blend( SDL_Surface *surface, int x, int y, Uint8 **map );
+void blit_background_row( LR_Surface *surface, int x, int y, Uint8 **map );
+void blit_background_row_blend( LR_Surface *surface, int x, int y, Uint8 **map );
 
-void draw_background_1( SDL_Surface *surface );
-void draw_background_2( SDL_Surface *surface );
-void draw_background_2_blend( SDL_Surface *surface );
-void draw_background_3( SDL_Surface *surface );
+void draw_background_1( LR_Surface *surface );
+void draw_background_2( LR_Surface *surface );
+void draw_background_2_blend( LR_Surface *surface );
+void draw_background_3( LR_Surface *surface );
 
 void JE_filterScreen( JE_shortint col, JE_shortint generic_int );
 
 void JE_checkSmoothies( void );
-void lava_filter( SDL_Surface *dst, SDL_Surface *src );
-void water_filter( SDL_Surface *dst, SDL_Surface *src );
-void iced_blur_filter( SDL_Surface *dst, SDL_Surface *src );
-void blur_filter( SDL_Surface *dst, SDL_Surface *src );
+void lava_filter( LR_Surface *dst, LR_Surface *src );
+void water_filter( LR_Surface *dst, LR_Surface *src );
+void iced_blur_filter( LR_Surface *dst, LR_Surface *src );
+void blur_filter( LR_Surface *dst, LR_Surface *src );
 /*smoothies #5 is used for 3*/
 /*smoothies #9 is a vertical flip*/
 
 void initialize_starfield( void );
-void update_and_draw_starfield( SDL_Surface* surface, int move_speed );
+void update_and_draw_starfield( LR_Surface* surface, int move_speed );
 
 #endif /* BACKGRND_H */
 

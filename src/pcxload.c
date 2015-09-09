@@ -24,7 +24,7 @@
 
 void JE_loadPCX( const char *file ) // this is only meant to load tshp2.pcx
 {
-	Uint8 *s = VGAScreen->pixels; /* 8-bit specific */
+	Uint8 *s = VGAScreen->surf->pixels; /* 8-bit specific */
 	
 	FILE *f = dir_fopen_die(data_dir(), file, "rb");
 	
@@ -57,7 +57,7 @@ void JE_loadPCX( const char *file ) // this is only meant to load tshp2.pcx
 		}
 		if (i && (i % 320 == 0))
 		{
-			s += VGAScreen->pitch - 320;
+			s += VGAScreen->surf->pitch - 320;
 		}
 	}
 	

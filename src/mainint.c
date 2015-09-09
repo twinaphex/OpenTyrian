@@ -199,11 +199,11 @@ void JE_helpSystem( JE_byte startTopic )
 	JE_showVGA();
 	fade_palette(colors, 10, 0, 255);
 
-	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
+	memcpy(VGAScreen2->surf->pixels, VGAScreen->surf->pixels, VGAScreen2->surf->pitch * VGAScreen2->surf->h);
 
 	do
 	{
-		memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
+		memcpy(VGAScreen->surf->pixels, VGAScreen2->surf->pixels, VGAScreen->surf->pitch * VGAScreen->surf->h);
 
 		temp2 = 0;
 
@@ -501,7 +501,7 @@ void JE_loadScreen( void )
 	sel = 1;
 	quit = false;
 
-	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
+	memcpy(VGAScreen2->surf->pixels, VGAScreen->surf->pixels, VGAScreen2->surf->pitch * VGAScreen2->surf->h);
 
 	do
 	{
@@ -512,7 +512,7 @@ void JE_loadScreen( void )
 			tempY = mouse_y;
 		}
 
-		memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
+		memcpy(VGAScreen->surf->pixels, VGAScreen2->surf->pixels, VGAScreen->surf->pitch * VGAScreen->surf->h);
 
 		JE_dString(VGAScreen, JE_fontCenter(miscText[38 + screen - 1], FONT_SHAPES), 5, miscText[38 + screen - 1], FONT_SHAPES);
 
@@ -892,13 +892,13 @@ void JE_highScoreScreen( void )
 	x = 1;
 	chg = 1;
 
-	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
+	memcpy(VGAScreen2->surf->pixels, VGAScreen->surf->pixels, VGAScreen2->surf->pitch * VGAScreen2->surf->h);
 
 	do
 	{
 		if (episodeAvail[x-1])
 		{
-			memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
+			memcpy(VGAScreen->surf->pixels, VGAScreen2->surf->pixels, VGAScreen->surf->pitch * VGAScreen->surf->h);
 
 			JE_dString(VGAScreen, JE_fontCenter(miscText[51 - 1], FONT_SHAPES), 03, miscText[51 - 1], FONT_SHAPES);
 			JE_dString(VGAScreen, JE_fontCenter(episode_name[x], SMALL_FONT_SHAPES), 30, episode_name[x], SMALL_FONT_SHAPES);
@@ -1099,7 +1099,7 @@ void JE_doInGameSetup( void )
 #ifdef WITH_NETWORK
 	if (isNetworkGame)
 	{
-		SDL_Surface *temp_surface = VGAScreen;
+		LR_Surface *temp_surface = VGAScreen;
 		VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
 
 		if (!yourInGameMenuRequest)
@@ -1163,7 +1163,7 @@ void JE_doInGameSetup( void )
 
 JE_boolean JE_inGameSetup( void )
 {
-	SDL_Surface *temp_surface = VGAScreen;
+	LR_Surface *temp_surface = VGAScreen;
 	VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
 
 	JE_boolean returnvalue = false;
@@ -1184,11 +1184,11 @@ JE_boolean JE_inGameSetup( void )
 
 	JE_barShade(VGAScreen, 3, 143, 257, 157); /*Help Box*/
 	JE_barShade(VGAScreen, 5, 145, 255, 155);
-	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
+	memcpy(VGAScreen2->surf->pixels, VGAScreen->surf->pixels, VGAScreen2->surf->pitch * VGAScreen2->surf->h);
 
 	do
 	{
-		memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
+		memcpy(VGAScreen->surf->pixels, VGAScreen2->surf->pixels, VGAScreen->surf->pitch * VGAScreen->surf->h);
 
 		for (x = 0; x < 6; x++)
 		{
@@ -1363,7 +1363,7 @@ JE_boolean JE_inGameSetup( void )
 
 void JE_inGameHelp( void )
 {
-	SDL_Surface *temp_surface = VGAScreen;
+	LR_Surface *temp_surface = VGAScreen;
 	VGAScreen = VGAScreenSeg; /* side-effect of game_screen */
 
 	//tempScreenSeg = VGAScreenSeg;
@@ -2313,7 +2313,7 @@ void JE_endLevelAni( void )
 	JE_clr256(VGAScreen);
 }
 
-void JE_drawCube( SDL_Surface * screen, JE_word x, JE_word y, JE_byte filter, JE_byte brightness )
+void JE_drawCube( LR_Surface * screen, JE_word x, JE_word y, JE_byte filter, JE_byte brightness )
 {
 	blit_sprite_dark(screen, x + 4, y + 4, OPTION_SHAPES, 25, false);
 	blit_sprite_dark(screen, x + 3, y + 3, OPTION_SHAPES, 25, false);
@@ -2603,7 +2603,7 @@ void JE_mainKeyboardInput( void )
 					else
 						editShip1 = true;
 
-					SDL_Surface *temp_surface = VGAScreen;
+					LR_Surface *temp_surface = VGAScreen;
 					VGAScreen = VGAScreenSeg;
 					JE_wipeShieldArmorBars();
 					JE_drawArmor();
@@ -2646,7 +2646,7 @@ void JE_mainKeyboardInput( void )
 					else
 						editShip2 = true;
 
-					SDL_Surface *temp_surface = VGAScreen;
+					LR_Surface *temp_surface = VGAScreen;
 					VGAScreen = VGAScreenSeg;
 					JE_wipeShieldArmorBars();
 					JE_drawArmor();

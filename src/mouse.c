@@ -39,11 +39,11 @@ void JE_drawShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
 	Uint8 *s;   /* screen pointer, 8-bit specific */
 	Uint8 *s_limit; /* buffer boundary */
 
-	s = (Uint8 *)VGAScreen->pixels;
-	s += y * VGAScreen->pitch + x;
+	s = (Uint8 *)VGAScreen->surf->pixels;
+	s += y * VGAScreen->surf->pitch + x;
 
-	s_limit = (Uint8 *)VGAScreen->pixels;
-	s_limit += VGAScreen->h * VGAScreen->pitch;
+	s_limit = (Uint8 *)VGAScreen->surf->pixels;
+	s_limit += VGAScreen->surf->h * VGAScreen->surf->pitch;
 
 	for (yloop = 0; yloop < 28; yloop++)
 	{
@@ -54,7 +54,7 @@ void JE_drawShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
 			s++; p++;
 		}
 		s -= 24;
-		s += VGAScreen->pitch;
+		s += VGAScreen->surf->pitch;
 	}
 }
 
@@ -65,11 +65,11 @@ void JE_grabShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
 	Uint8 *s;   /* screen pointer, 8-bit specific */
 	Uint8 *s_limit; /* buffer boundary */
 
-	s = (Uint8 *)VGAScreen->pixels;
-	s += y * VGAScreen->pitch + x;
+	s = (Uint8 *)VGAScreen->surf->pixels;
+	s += y * VGAScreen->surf->pitch + x;
 
-	s_limit = (Uint8 *)VGAScreen->pixels;
-	s_limit += VGAScreen->h * VGAScreen->pitch;
+	s_limit = (Uint8 *)VGAScreen->surf->pixels;
+	s_limit += VGAScreen->surf->h * VGAScreen->surf->pitch;
 
 	for (yloop = 0; yloop < 28; yloop++)
 	{
@@ -80,7 +80,7 @@ void JE_grabShapeTypeOne( JE_word x, JE_word y, JE_byte *shape )
 			s++; p++;
 		}
 		s -= 24;
-		s += VGAScreen->pitch;
+		s += VGAScreen->surf->pitch;
 	}
 }
 

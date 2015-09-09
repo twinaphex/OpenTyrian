@@ -85,7 +85,7 @@ void free_sprites( unsigned int table )
 }
 
 // does not clip on left or right edges of surface
-void blit_sprite( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index )
+void blit_sprite( LR_Surface *surface, int x, int y, unsigned int table, unsigned int index )
 {
 	if (index >= sprite_table[table].count || !sprite_exists(table, index))
 	{
@@ -101,10 +101,10 @@ void blit_sprite( SDL_Surface *surface, int x, int y, unsigned int table, unsign
 	const unsigned int width = cur_sprite->width;
 	unsigned int x_offset = 0;
 	
-	assert(surface->format->BitsPerPixel == 8);
-	Uint8 *             pixels =    (Uint8 *)surface->pixels + (y * surface->pitch) + x;
-	const Uint8 * const pixels_ll = (Uint8 *)surface->pixels,  // lower limit
-	            * const pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
+	assert(surface->surf->format->BitsPerPixel == 8);
+	Uint8 *             pixels =    (Uint8 *)surface->surf->pixels + (y * surface->surf->pitch) + x;
+	const Uint8 * const pixels_ll = (Uint8 *)surface->surf->pixels,  // lower limit
+	            * const pixels_ul = (Uint8 *)surface->surf->pixels + (surface->surf->h * surface->surf->pitch);  // upper limit
 	
 	for (; data < data_ul; ++data)
 	{
@@ -138,14 +138,14 @@ void blit_sprite( SDL_Surface *surface, int x, int y, unsigned int table, unsign
 		}
 		if (x_offset >= width)
 		{
-			pixels += surface->pitch - x_offset;
+			pixels += surface->surf->pitch - x_offset;
 			x_offset = 0;
 		}
 	}
 }
 
 // does not clip on left or right edges of surface
-void blit_sprite_blend( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index )
+void blit_sprite_blend( LR_Surface *surface, int x, int y, unsigned int table, unsigned int index )
 {
 	if (index >= sprite_table[table].count || !sprite_exists(table, index))
 	{
@@ -161,10 +161,10 @@ void blit_sprite_blend( SDL_Surface *surface, int x, int y, unsigned int table, 
 	const unsigned int width = cur_sprite->width;
 	unsigned int x_offset = 0;
 	
-	assert(surface->format->BitsPerPixel == 8);
-	Uint8 *             pixels =    (Uint8 *)surface->pixels + (y * surface->pitch) + x;
-	const Uint8 * const pixels_ll = (Uint8 *)surface->pixels,  // lower limit
-	            * const pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
+	assert(surface->surf->format->BitsPerPixel == 8);
+	Uint8 *             pixels =    (Uint8 *)surface->surf->pixels + (y * surface->surf->pitch) + x;
+	const Uint8 * const pixels_ll = (Uint8 *)surface->surf->pixels,  // lower limit
+	            * const pixels_ul = (Uint8 *)surface->surf->pixels + (surface->surf->h * surface->surf->pitch);  // upper limit
 	
 	for (; data < data_ul; ++data)
 	{
@@ -198,7 +198,7 @@ void blit_sprite_blend( SDL_Surface *surface, int x, int y, unsigned int table, 
 		}
 		if (x_offset >= width)
 		{
-			pixels += surface->pitch - x_offset;
+			pixels += surface->surf->pitch - x_offset;
 			x_offset = 0;
 		}
 	}
@@ -207,7 +207,7 @@ void blit_sprite_blend( SDL_Surface *surface, int x, int y, unsigned int table, 
 // does not clip on left or right edges of surface
 // unsafe because it doesn't check that value won't overflow into hue
 // we can replace it when we know that we don't rely on that 'feature'
-void blit_sprite_hv_unsafe( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index, Uint8 hue, Sint8 value )
+void blit_sprite_hv_unsafe( LR_Surface *surface, int x, int y, unsigned int table, unsigned int index, Uint8 hue, Sint8 value )
 {
 	if (index >= sprite_table[table].count || !sprite_exists(table, index))
 	{
@@ -225,10 +225,10 @@ void blit_sprite_hv_unsafe( SDL_Surface *surface, int x, int y, unsigned int tab
 	const unsigned int width = cur_sprite->width;
 	unsigned int x_offset = 0;
 	
-	assert(surface->format->BitsPerPixel == 8);
-	Uint8 *             pixels =    (Uint8 *)surface->pixels + (y * surface->pitch) + x;
-	const Uint8 * const pixels_ll = (Uint8 *)surface->pixels,  // lower limit
-	            * const pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
+	assert(surface->surf->format->BitsPerPixel == 8);
+	Uint8 *             pixels =    (Uint8 *)surface->surf->pixels + (y * surface->surf->pitch) + x;
+	const Uint8 * const pixels_ll = (Uint8 *)surface->surf->pixels,  // lower limit
+	            * const pixels_ul = (Uint8 *)surface->surf->pixels + (surface->surf->h * surface->surf->pitch);  // upper limit
 	
 	for (; data < data_ul; ++data)
 	{
@@ -262,14 +262,14 @@ void blit_sprite_hv_unsafe( SDL_Surface *surface, int x, int y, unsigned int tab
 		}
 		if (x_offset >= width)
 		{
-			pixels += surface->pitch - x_offset;
+			pixels += surface->surf->pitch - x_offset;
 			x_offset = 0;
 		}
 	}
 }
 
 // does not clip on left or right edges of surface
-void blit_sprite_hv( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index, Uint8 hue, Sint8 value )
+void blit_sprite_hv( LR_Surface *surface, int x, int y, unsigned int table, unsigned int index, Uint8 hue, Sint8 value )
 {
 	if (index >= sprite_table[table].count || !sprite_exists(table, index))
 	{
@@ -287,10 +287,10 @@ void blit_sprite_hv( SDL_Surface *surface, int x, int y, unsigned int table, uns
 	const unsigned int width = cur_sprite->width;
 	unsigned int x_offset = 0;
 	
-	assert(surface->format->BitsPerPixel == 8);
-	Uint8 *             pixels =    (Uint8 *)surface->pixels + (y * surface->pitch) + x;
-	const Uint8 * const pixels_ll = (Uint8 *)surface->pixels,  // lower limit
-	            * const pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
+	assert(surface->surf->format->BitsPerPixel == 8);
+	Uint8 *             pixels =    (Uint8 *)surface->surf->pixels + (y * surface->surf->pitch) + x;
+	const Uint8 * const pixels_ll = (Uint8 *)surface->surf->pixels,  // lower limit
+	            * const pixels_ul = (Uint8 *)surface->surf->pixels + (surface->surf->h * surface->surf->pitch);  // upper limit
 	
 	for (; data < data_ul; ++data)
 	{
@@ -330,14 +330,14 @@ void blit_sprite_hv( SDL_Surface *surface, int x, int y, unsigned int table, uns
 		}
 		if (x_offset >= width)
 		{
-			pixels += surface->pitch - x_offset;
+			pixels += surface->surf->pitch - x_offset;
 			x_offset = 0;
 		}
 	}
 }
 
 // does not clip on left or right edges of surface
-void blit_sprite_hv_blend( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index, Uint8 hue, Sint8 value )
+void blit_sprite_hv_blend( LR_Surface *surface, int x, int y, unsigned int table, unsigned int index, Uint8 hue, Sint8 value )
 {
 	if (index >= sprite_table[table].count || !sprite_exists(table, index))
 	{
@@ -355,10 +355,10 @@ void blit_sprite_hv_blend( SDL_Surface *surface, int x, int y, unsigned int tabl
 	const unsigned int width = cur_sprite->width;
 	unsigned int x_offset = 0;
 	
-	assert(surface->format->BitsPerPixel == 8);
-	Uint8 *             pixels =    (Uint8 *)surface->pixels + (y * surface->pitch) + x;
-	const Uint8 * const pixels_ll = (Uint8 *)surface->pixels,  // lower limit
-	            * const pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
+	assert(surface->surf->format->BitsPerPixel == 8);
+	Uint8 *             pixels =    (Uint8 *)surface->surf->pixels + (y * surface->surf->pitch) + x;
+	const Uint8 * const pixels_ll = (Uint8 *)surface->surf->pixels,  // lower limit
+	            * const pixels_ul = (Uint8 *)surface->surf->pixels + (surface->surf->h * surface->surf->pitch);  // upper limit
 	
 	for (; data < data_ul; ++data)
 	{
@@ -398,14 +398,14 @@ void blit_sprite_hv_blend( SDL_Surface *surface, int x, int y, unsigned int tabl
 		}
 		if (x_offset >= width)
 		{
-			pixels += surface->pitch - x_offset;
+			pixels += surface->surf->pitch - x_offset;
 			x_offset = 0;
 		}
 	}
 }
 
 // does not clip on left or right edges of surface
-void blit_sprite_dark( SDL_Surface *surface, int x, int y, unsigned int table, unsigned int index, bool black )
+void blit_sprite_dark( LR_Surface *surface, int x, int y, unsigned int table, unsigned int index, bool black )
 {
 	if (index >= sprite_table[table].count || !sprite_exists(table, index))
 	{
@@ -421,10 +421,10 @@ void blit_sprite_dark( SDL_Surface *surface, int x, int y, unsigned int table, u
 	const unsigned int width = cur_sprite->width;
 	unsigned int x_offset = 0;
 	
-	assert(surface->format->BitsPerPixel == 8);
-	Uint8 *             pixels =    (Uint8 *)surface->pixels + (y * surface->pitch) + x;
-	const Uint8 * const pixels_ll = (Uint8 *)surface->pixels,  // lower limit
-	            * const pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
+	assert(surface->surf->format->BitsPerPixel == 8);
+	Uint8 *             pixels =    (Uint8 *)surface->surf->pixels + (y * surface->surf->pitch) + x;
+	const Uint8 * const pixels_ll = (Uint8 *)surface->surf->pixels,  // lower limit
+	            * const pixels_ul = (Uint8 *)surface->surf->pixels + (surface->surf->h * surface->surf->pitch);  // upper limit
 	
 	for (; data < data_ul; ++data)
 	{
@@ -458,7 +458,7 @@ void blit_sprite_dark( SDL_Surface *surface, int x, int y, unsigned int table, u
 		}
 		if (x_offset >= width)
 		{
-			pixels += surface->pitch - x_offset;
+			pixels += surface->surf->pitch - x_offset;
 			x_offset = 0;
 		}
 	}
@@ -494,12 +494,12 @@ void free_sprite2s( Sprite2_array *sprite2s )
 }
 
 // does not clip on left or right edges of surface
-void blit_sprite2( SDL_Surface *surface, int x, int y, Sprite2_array sprite2s, unsigned int index )
+void blit_sprite2( LR_Surface *surface, int x, int y, Sprite2_array sprite2s, unsigned int index )
 {
-	assert(surface->format->BitsPerPixel == 8);
-	Uint8 *             pixels =    (Uint8 *)surface->pixels + (y * surface->pitch) + x;
-	const Uint8 * const pixels_ll = (Uint8 *)surface->pixels,  // lower limit
-	            * const pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
+	assert(surface->surf->format->BitsPerPixel == 8);
+	Uint8 *             pixels =    (Uint8 *)surface->surf->pixels + (y * surface->surf->pitch) + x;
+	const Uint8 * const pixels_ll = (Uint8 *)surface->surf->pixels,  // lower limit
+	            * const pixels_ul = (Uint8 *)surface->surf->pixels + (surface->surf->h * surface->surf->pitch);  // upper limit
 	
 	const Uint8 *data = sprite2s.data + SDL_SwapLE16(((Uint16 *)sprite2s.data)[index - 1]);
 	
@@ -510,7 +510,7 @@ void blit_sprite2( SDL_Surface *surface, int x, int y, Sprite2_array sprite2s, u
 		
 		if (count == 0) // move to next pixel row
 		{
-			pixels += VGAScreen->pitch - 12;
+			pixels += VGAScreen->surf->pitch - 12;
 		}
 		else
 		{
@@ -530,12 +530,12 @@ void blit_sprite2( SDL_Surface *surface, int x, int y, Sprite2_array sprite2s, u
 }
 
 // does not clip on left or right edges of surface
-void blit_sprite2_blend( SDL_Surface *surface,  int x, int y, Sprite2_array sprite2s, unsigned int index )
+void blit_sprite2_blend( LR_Surface *surface,  int x, int y, Sprite2_array sprite2s, unsigned int index )
 {
-	assert(surface->format->BitsPerPixel == 8);
-	Uint8 *             pixels =    (Uint8 *)surface->pixels + (y * surface->pitch) + x;
-	const Uint8 * const pixels_ll = (Uint8 *)surface->pixels,  // lower limit
-	            * const pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
+	assert(surface->surf->format->BitsPerPixel == 8);
+	Uint8 *             pixels =    (Uint8 *)surface->surf->pixels + (y * surface->surf->pitch) + x;
+	const Uint8 * const pixels_ll = (Uint8 *)surface->surf->pixels,  // lower limit
+	            * const pixels_ul = (Uint8 *)surface->surf->pixels + (surface->surf->h * surface->surf->pitch);  // upper limit
 	
 	const Uint8 *data = sprite2s.data + SDL_SwapLE16(((Uint16 *)sprite2s.data)[index - 1]);
 	
@@ -546,7 +546,7 @@ void blit_sprite2_blend( SDL_Surface *surface,  int x, int y, Sprite2_array spri
 		
 		if (count == 0) // move to next pixel row
 		{
-			pixels += VGAScreen->pitch - 12;
+			pixels += VGAScreen->surf->pitch - 12;
 		}
 		else
 		{
@@ -566,12 +566,12 @@ void blit_sprite2_blend( SDL_Surface *surface,  int x, int y, Sprite2_array spri
 }
 
 // does not clip on left or right edges of surface
-void blit_sprite2_darken( SDL_Surface *surface, int x, int y, Sprite2_array sprite2s, unsigned int index )
+void blit_sprite2_darken( LR_Surface *surface, int x, int y, Sprite2_array sprite2s, unsigned int index )
 {
-	assert(surface->format->BitsPerPixel == 8);
-	Uint8 *             pixels =    (Uint8 *)surface->pixels + (y * surface->pitch) + x;
-	const Uint8 * const pixels_ll = (Uint8 *)surface->pixels,  // lower limit
-	            * const pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
+	assert(surface->surf->format->BitsPerPixel == 8);
+	Uint8 *             pixels =    (Uint8 *)surface->surf->pixels + (y * surface->surf->pitch) + x;
+	const Uint8 * const pixels_ll = (Uint8 *)surface->surf->pixels,  // lower limit
+	            * const pixels_ul = (Uint8 *)surface->surf->pixels + (surface->surf->h * surface->surf->pitch);  // upper limit
 	
 	const Uint8 *data = sprite2s.data + SDL_SwapLE16(((Uint16 *)sprite2s.data)[index - 1]);
 	
@@ -582,7 +582,7 @@ void blit_sprite2_darken( SDL_Surface *surface, int x, int y, Sprite2_array spri
 		
 		if (count == 0) // move to next pixel row
 		{
-			pixels += VGAScreen->pitch - 12;
+			pixels += VGAScreen->surf->pitch - 12;
 		}
 		else
 		{
@@ -602,12 +602,12 @@ void blit_sprite2_darken( SDL_Surface *surface, int x, int y, Sprite2_array spri
 }
 
 // does not clip on left or right edges of surface
-void blit_sprite2_filter( SDL_Surface *surface, int x, int y, Sprite2_array sprite2s, unsigned int index, Uint8 filter )
+void blit_sprite2_filter( LR_Surface *surface, int x, int y, Sprite2_array sprite2s, unsigned int index, Uint8 filter )
 {
-	assert(surface->format->BitsPerPixel == 8);
-	Uint8 *             pixels =    (Uint8 *)surface->pixels + (y * surface->pitch) + x;
-	const Uint8 * const pixels_ll = (Uint8 *)surface->pixels,  // lower limit
-	            * const pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
+	assert(surface->surf->format->BitsPerPixel == 8);
+	Uint8 *             pixels =    (Uint8 *)surface->surf->pixels + (y * surface->surf->pitch) + x;
+	const Uint8 * const pixels_ll = (Uint8 *)surface->surf->pixels,  // lower limit
+	            * const pixels_ul = (Uint8 *)surface->surf->pixels + (surface->surf->h * surface->surf->pitch);  // upper limit
 	
 	const Uint8 *data = sprite2s.data + SDL_SwapLE16(((Uint16 *)sprite2s.data)[index - 1]);
 	
@@ -618,7 +618,7 @@ void blit_sprite2_filter( SDL_Surface *surface, int x, int y, Sprite2_array spri
 		
 		if (count == 0) // move to next pixel row
 		{
-			pixels += VGAScreen->pitch - 12;
+			pixels += VGAScreen->surf->pitch - 12;
 		}
 		else
 		{
@@ -638,7 +638,7 @@ void blit_sprite2_filter( SDL_Surface *surface, int x, int y, Sprite2_array spri
 }
 
 // does not clip on left or right edges of surface
-void blit_sprite2x2( SDL_Surface *surface, int x, int y, Sprite2_array sprite2s, unsigned int index )
+void blit_sprite2x2( LR_Surface *surface, int x, int y, Sprite2_array sprite2s, unsigned int index )
 {
 	blit_sprite2(surface, x,      y,      sprite2s, index);
 	blit_sprite2(surface, x + 12, y,      sprite2s, index + 1);
@@ -647,7 +647,7 @@ void blit_sprite2x2( SDL_Surface *surface, int x, int y, Sprite2_array sprite2s,
 }
 
 // does not clip on left or right edges of surface
-void blit_sprite2x2_blend( SDL_Surface *surface, int x, int y, Sprite2_array sprite2s, unsigned int index )
+void blit_sprite2x2_blend( LR_Surface *surface, int x, int y, Sprite2_array sprite2s, unsigned int index )
 {
 	blit_sprite2_blend(surface, x,      y,      sprite2s, index);
 	blit_sprite2_blend(surface, x + 12, y,      sprite2s, index + 1);
@@ -656,7 +656,7 @@ void blit_sprite2x2_blend( SDL_Surface *surface, int x, int y, Sprite2_array spr
 }
 
 // does not clip on left or right edges of surface
-void blit_sprite2x2_darken( SDL_Surface *surface, int x, int y, Sprite2_array sprite2s, unsigned int index )
+void blit_sprite2x2_darken( LR_Surface *surface, int x, int y, Sprite2_array sprite2s, unsigned int index )
 {
 	blit_sprite2_darken(surface, x,      y,      sprite2s, index);
 	blit_sprite2_darken(surface, x + 12, y,      sprite2s, index + 1);

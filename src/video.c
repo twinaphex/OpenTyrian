@@ -27,9 +27,9 @@
 
 bool fullscreen_enabled = false;
 
-SDL_Surface *VGAScreen, *VGAScreenSeg;
-SDL_Surface *VGAScreen2;
-SDL_Surface *game_screen;
+LR_Surface *VGAScreen, *VGAScreenSeg;
+LR_Surface *VGAScreen2;
+LR_Surface *game_screen;
 
 static ScalerFunction scaler_function;
 
@@ -46,11 +46,16 @@ void init_video( void )
 
 	SDL_WM_SetCaption("OpenTyrian", NULL);
 
-	VGAScreen = VGAScreenSeg = SDL_CreateRGBSurface(SDL_SWSURFACE, vga_width, vga_height, 8, 0, 0, 0, 0);
-	VGAScreen2 = SDL_CreateRGBSurface(SDL_SWSURFACE, vga_width, vga_height, 8, 0, 0, 0, 0);
-	game_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, vga_width, vga_height, 8, 0, 0, 0, 0);
+   VGAScreen    = (LR_Surface*)calloc(1, sizeof(*VGAScreen));
+   VGAScreen2   = (LR_Surface*)calloc(1, sizeof(*VGAScreen2));
+   VGAScreenSeg = (LR_Surface*)calloc(1, sizeof(*VGAScreenSeg));
+   game_screen  = (LR_Surface*)calloc(1, sizeof(*game_screen));
 
-	SDL_FillRect(VGAScreen, NULL, 0);
+	VGAScreen->surf   = VGAScreenSeg->surf = SDL_CreateRGBSurface(SDL_SWSURFACE, vga_width, vga_height, 8, 0, 0, 0, 0);
+	VGAScreen2->surf  = SDL_CreateRGBSurface(SDL_SWSURFACE, vga_width, vga_height, 8, 0, 0, 0, 0);
+	game_screen->surf = SDL_CreateRGBSurface(SDL_SWSURFACE, vga_width, vga_height, 8, 0, 0, 0, 0);
+
+	SDL_FillRect(VGAScreen->surf, NULL, 0);
 
 	if (!init_scaler(scaler, fullscreen_enabled) &&  // try desired scaler and desired fullscreen state
 	    !init_any_scaler(fullscreen_enabled) &&      // try any scaler in desired fullscreen state
@@ -133,28 +138,39 @@ bool init_any_scaler( bool fullscreen )
 
 void deinit_video( void )
 {
-	SDL_FreeSurface(VGAScreenSeg);
-	SDL_FreeSurface(VGAScreen2);
-	SDL_FreeSurface(game_screen);
+	SDL_FreeSurface(VGAScreenSeg->surf);
+	SDL_FreeSurface(VGAScreen2->surf);
+	SDL_FreeSurface(game_screen->surf);
+
+   if (VGAScreenSeg)
+      free(VGAScreenSeg);
+   VGAScreen   = NULL;
+   if (VGAScreen2)
+      free(VGAScreen2);
+   VGAScreen2  = NULL;
+   if (game_screen)
+      free(game_screen);
+   game_screen = NULL;
 	
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
-void JE_clr256( SDL_Surface * screen)
+void JE_clr256( LR_Surface *screen)
 {
-	memset(screen->pixels, 0, screen->pitch * screen->h);
+	memset(screen->surf->pixels, 0, screen->surf->pitch * screen->surf->h);
 }
 void JE_showVGA( void ) { scale_and_flip(VGAScreen); }
 
-void scale_and_flip( SDL_Surface *src_surface )
+void scale_and_flip( LR_Surface *src_surface )
 {
-	assert(src_surface->format->BitsPerPixel == 8);
+   LR_Surface dst_surface;
+	assert(src_surface->surf->format->BitsPerPixel == 8);
 	
-	SDL_Surface *dst_surface = SDL_GetVideoSurface();
+	dst_surface.surf = SDL_GetVideoSurface();
 	
 	assert(scaler_function != NULL);
-	scaler_function(src_surface, dst_surface);
+	scaler_function(src_surface, &dst_surface);
 	
-	SDL_Flip(dst_surface);
+	SDL_Flip(dst_surface.surf);
 }
 

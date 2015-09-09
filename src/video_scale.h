@@ -20,10 +20,9 @@
 #define VIDEO_SCALE_H
 
 #include "opentyr.h"
+#include "surface.h"
 
-#include "SDL.h"
-
-typedef void (*ScalerFunction)( SDL_Surface *dst, SDL_Surface *src );
+typedef void (*ScalerFunction)( LR_Surface *dst, LR_Surface *src );
 
 struct Scalers
 {

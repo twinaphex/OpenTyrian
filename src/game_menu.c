@@ -200,7 +200,7 @@ void JE_itemScreen( void )
 		}
 	}
 
-	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
+	memcpy(VGAScreen2->surf->pixels, VGAScreen->surf->pixels, VGAScreen2->surf->pitch * VGAScreen2->surf->h);
 
 	keyboardUsed = false;
 	firstMenu9 = false;
@@ -253,7 +253,7 @@ void JE_itemScreen( void )
 		/* SYN: note reindexing... "firstMenu9" refers to Menu 8 here :( */
 		if (curMenu != 8 || firstMenu9)
 		{
-			memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
+			memcpy(VGAScreen->surf->pixels, VGAScreen2->surf->pixels, VGAScreen->surf->pitch * VGAScreen->surf->h);
 		}
 
 		defaultBrightness = -3;
@@ -1298,7 +1298,7 @@ void JE_itemScreen( void )
 						break;
 					}
 
-					memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
+					memcpy(VGAScreen2->surf->pixels, VGAScreen->surf->pixels, VGAScreen2->surf->pitch * VGAScreen2->surf->h);
 
 					curPal = newPal;
 					memcpy(colors, palettes[newPal-1], sizeof(colors));
@@ -2022,7 +2022,7 @@ void JE_updateNavScreen( void )
 	}
 }
 
-void JE_drawLines( SDL_Surface *surface, JE_boolean dark )
+void JE_drawLines( LR_Surface *surface, JE_boolean dark )
 {
 	JE_byte x, y;
 	JE_integer tempX, tempY;
@@ -2166,7 +2166,7 @@ void JE_drawPlanet( JE_byte planetNum )
 	}
 }
 
-void JE_scaleBitmap( SDL_Surface *dst_bitmap, const SDL_Surface *src_bitmap,  int x1, int y1, int x2, int y2 )
+void JE_scaleBitmap( LR_Surface *dst_bitmap, const LR_Surface *src_bitmap,  int x1, int y1, int x2, int y2 )
 {
 	/* This function scales one screen and writes the result to another.
 	 *  The only code that calls it is the code run when you select 'ship
@@ -2175,27 +2175,27 @@ void JE_scaleBitmap( SDL_Surface *dst_bitmap, const SDL_Surface *src_bitmap,  in
 	 * Originally this used fixed point math.  I haven't seen that in ages :).
 	 * But we're well past the point of needing that.*/
 
-	assert(src_bitmap != NULL && dst_bitmap != NULL);
-	assert(x1 >= 0 && y1 >= 0 && x2 < src_bitmap->pitch && y2 < src_bitmap->h);
+	assert(src_bitmap->surf != NULL && dst_bitmap->surf != NULL);
+	assert(x1 >= 0 && y1 >= 0 && x2 < src_bitmap->surf->pitch && y2 < src_bitmap->surf->h);
 
 	int w = x2 - x1 + 1,
 	    h = y2 - y1 + 1;
-	float base_skip_w = src_bitmap->pitch / (float)w,
-	      base_skip_h = src_bitmap->h / (float)h;
+	float base_skip_w = src_bitmap->surf->pitch / (float)w,
+	      base_skip_h = src_bitmap->surf->h / (float)h;
 	float cumulative_skip_w, cumulative_skip_h;
 
 
 	//Okay, it's time to loop through and add bits of A to a rectangle in B
-	Uint8 *dst = dst_bitmap->pixels;  /* 8-bit specific */
+	Uint8 *dst = dst_bitmap->surf->pixels;  /* 8-bit specific */
 	const Uint8 *src, *src_w;  /* 8-bit specific */
 
-	dst += y1 * dst_bitmap->pitch + x1;
+	dst += y1 * dst_bitmap->surf->pitch + x1;
 	cumulative_skip_h = 0;
 
 	for (int i = 0; i < h; i++)
 	{
 		//this sets src to the beginning of our desired line
-		src = src_w = (Uint8 *)(src_bitmap->pixels) + (src_bitmap->w * ((unsigned int)cumulative_skip_h));
+		src = src_w = (Uint8 *)(src_bitmap->surf->pixels) + (src_bitmap->surf->w * ((unsigned int)cumulative_skip_h));
 		cumulative_skip_h += base_skip_h;
 		cumulative_skip_w = 0;
 
@@ -2209,7 +2209,7 @@ void JE_scaleBitmap( SDL_Surface *dst_bitmap, const SDL_Surface *src_bitmap,  in
 			src = src_w + ((unsigned int)cumulative_skip_w); //value is floored
 		}
 
-		dst += dst_bitmap->pitch - w;
+		dst += dst_bitmap->surf->pitch - w;
 	}
 }
 
@@ -2498,7 +2498,7 @@ void JE_genItemMenu( JE_byte itemNum )
 	curSel[4] = temp3;
 }
 
-void JE_scaleInPicture( SDL_Surface *dst, const SDL_Surface *src )
+void JE_scaleInPicture( LR_Surface *dst, const LR_Surface *src )
 {
 	for (int i = 2; i <= 160; i += 2)
 	{
@@ -2958,7 +2958,7 @@ joystick_assign_done:
 	old_items[0] = player[0].items;
 }
 
-void JE_drawShipSpecs( SDL_Surface * screen, SDL_Surface * temp_screen  )
+void JE_drawShipSpecs( LR_Surface * screen, LR_Surface * temp_screen  )
 {
 	/* In this function we create our ship description image.
 	 *
@@ -3032,20 +3032,20 @@ void JE_drawShipSpecs( SDL_Surface * screen, SDL_Surface * temp_screen  )
 	 * We can't work in place.  In fact we'll need to overlay the result
 	 * To avoid our temp screen dependence this has been rewritten to
 	 * only write one line at a time.*/
-	dst = screen->pixels;
-	src = temp_screen->pixels;
-	for (int y = 0; y < screen->h; y++)
+	dst = screen->surf->pixels;
+	src = temp_screen->surf->pixels;
+	for (int y = 0; y < screen->surf->h; y++)
 	{
-		for (int x = 0; x < screen->pitch; x++)
+		for (int x = 0; x < screen->surf->pitch; x++)
 		{
 			int avg = 0;
 			if (y > 0)
-				avg += *(src - screen->pitch) & 0x0f;
-			if (y < screen->h - 1)
-				avg += *(src + screen->pitch) & 0x0f;
+				avg += *(src - screen->surf->pitch) & 0x0f;
+			if (y < screen->surf->h - 1)
+				avg += *(src + screen->surf->pitch) & 0x0f;
 			if (x > 0)
 				avg += *(src - 1) & 0x0f;
-			if (x < screen->pitch - 1)
+			if (x < screen->surf->pitch - 1)
 				avg += *(src + 1) & 0x0f;
 			avg /= 4;
 

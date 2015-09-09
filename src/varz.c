@@ -393,8 +393,9 @@ JE_word JE_SGr( JE_word ship, Sprite2_array **ptr )
 
 void JE_drawOptions( void )
 {
-	SDL_Surface *temp_surface = VGAScreen;
-	VGAScreen = VGAScreenSeg;
+   LR_Surface *surf          = VGAScreen;
+	SDL_Surface *temp_surface = surf->surf;
+	VGAScreen->surf           = VGAScreenSeg->surf;
 
 	Player *this_player = &player[twoPlayerMode ? 1 : 0];
 
@@ -426,7 +427,7 @@ void JE_drawOptions( void )
 		draw_segmented_gauge(VGAScreenSeg, 284, y + 13, 112, 2, 2, MAX(1, this_player->sidekick[i].ammo_max / 10), this_player->sidekick[i].ammo);
 	}
 
-	VGAScreen = temp_surface;
+	VGAScreen->surf = temp_surface;
 
 	JE_drawOptionLevel();
 }
@@ -1160,21 +1161,21 @@ void JE_drawSP( void )
 			superpixels[i].x += superpixels[i].delta_x;
 			superpixels[i].y += superpixels[i].delta_y;
 
-			if (superpixels[i].x < (unsigned)VGAScreen->w && superpixels[i].y < (unsigned)VGAScreen->h)
+			if (superpixels[i].x < (unsigned)VGAScreen->surf->w && superpixels[i].y < (unsigned)VGAScreen->surf->h)
 			{
-				Uint8 *s = (Uint8 *)VGAScreen->pixels; /* screen pointer, 8-bit specific */
-				s += superpixels[i].y * VGAScreen->pitch;
+				Uint8 *s = (Uint8 *)VGAScreen->surf->pixels; /* screen pointer, 8-bit specific */
+				s += superpixels[i].y * VGAScreen->surf->pitch;
 				s += superpixels[i].x;
 
 				*s = (((*s & 0x0f) + superpixels[i].z) >> 1) + superpixels[i].color;
 				if (superpixels[i].x > 0)
 					*(s - 1) = (((*(s - 1) & 0x0f) + (superpixels[i].z >> 1)) >> 1) + superpixels[i].color;
-				if (superpixels[i].x < VGAScreen->w - 1u)
+				if (superpixels[i].x < VGAScreen->surf->w - 1u)
 					*(s + 1) = (((*(s + 1) & 0x0f) + (superpixels[i].z >> 1)) >> 1) + superpixels[i].color;
 				if (superpixels[i].y > 0)
-					*(s - VGAScreen->pitch) = (((*(s - VGAScreen->pitch) & 0x0f) + (superpixels[i].z >> 1)) >> 1) + superpixels[i].color;
-				if (superpixels[i].y < VGAScreen->h - 1u)
-					*(s + VGAScreen->pitch) = (((*(s + VGAScreen->pitch) & 0x0f) + (superpixels[i].z >> 1)) >> 1) + superpixels[i].color;
+					*(s - VGAScreen->surf->pitch) = (((*(s - VGAScreen->surf->pitch) & 0x0f) + (superpixels[i].z >> 1)) >> 1) + superpixels[i].color;
+				if (superpixels[i].y < VGAScreen->surf->h - 1u)
+					*(s + VGAScreen->surf->pitch) = (((*(s + VGAScreen->surf->pitch) & 0x0f) + (superpixels[i].z >> 1)) >> 1) + superpixels[i].color;
 			}
 
 			superpixels[i].z--;

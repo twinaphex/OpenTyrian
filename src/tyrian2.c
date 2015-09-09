@@ -55,7 +55,7 @@
 #include <string.h>
 #include <stdint.h>
 
-inline static void blit_enemy( SDL_Surface *surface, unsigned int i, signed int x_offset, signed int y_offset, signed int sprite_offset );
+inline static void blit_enemy( LR_Surface *surface, unsigned int i, signed int x_offset, signed int y_offset, signed int sprite_offset );
 
 boss_bar_t boss_bar[2];
 
@@ -83,9 +83,9 @@ void JE_starShowVGA( void )
 	if (!playerEndLevel && !skipStarShowVGA)
 	{
 
-		s = VGAScreenSeg->pixels;
+		s = VGAScreenSeg->surf->pixels;
 
-		src = game_screen->pixels;
+		src = game_screen->surf->pixels;
 		src += 24;
 
 		if (smoothScroll != 0 /*&& thisPlayerNum != 2*/)
@@ -96,12 +96,12 @@ void JE_starShowVGA( void )
 
 		if (starShowVGASpecialCode == 1)
 		{
-			src += game_screen->pitch * 183;
+			src += game_screen->surf->pitch * 183;
 			for (y = 0; y < 184; y++)
 			{
 				memmove(s, src, 264);
-				s += VGAScreenSeg->pitch;
-				src -= game_screen->pitch;
+				s += VGAScreenSeg->surf->pitch;
+				src -= game_screen->surf->pitch;
 			}
 		}
 		else if (starShowVGASpecialCode == 2 && processorType >= 2)
@@ -135,8 +135,8 @@ void JE_starShowVGA( void )
 						src++;
 					}
 				}
-				s += 56 + VGAScreenSeg->pitch - 320;
-				src += 56 + VGAScreenSeg->pitch - 320;
+				s += 56 + VGAScreenSeg->surf->pitch - 320;
+				src += 56 + VGAScreenSeg->surf->pitch - 320;
 			}
 		}
 		else
@@ -144,8 +144,8 @@ void JE_starShowVGA( void )
 			for (y = 0; y < 184; y++)
 			{
 				memmove(s, src, 264);
-				s += VGAScreenSeg->pitch;
-				src += game_screen->pitch;
+				s += VGAScreenSeg->surf->pitch;
+				src += game_screen->surf->pitch;
 			}
 		}
 		JE_showVGA();
@@ -155,7 +155,7 @@ void JE_starShowVGA( void )
 	skipStarShowVGA = false;
 }
 
-inline static void blit_enemy( SDL_Surface *surface, unsigned int i, signed int x_offset, signed int y_offset, signed int sprite_offset )
+inline static void blit_enemy( LR_Surface *surface, unsigned int i, signed int x_offset, signed int y_offset, signed int sprite_offset )
 {
 	if (enemy[i].sprite2s == NULL)
 	{
@@ -2789,11 +2789,11 @@ new_game:
 					case 'U':
 						if (!constantPlay)
 						{
-							memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
+							memcpy(VGAScreen2->surf->pixels, VGAScreen->surf->pixels, VGAScreen2->surf->pitch * VGAScreen2->surf->h);
 
 							tempX = atoi(strnztcpy(buffer, s + 3, 3));
 							JE_loadPic(VGAScreen, tempX, false);
-							memcpy(pic_buffer, VGAScreen->pixels, sizeof(pic_buffer));
+							memcpy(pic_buffer, VGAScreen->surf->pixels, sizeof(pic_buffer));
 
 							service_SDL_events(true);
 
@@ -2801,8 +2801,8 @@ new_game:
 							{
 								if (!newkey)
 								{
-									vga = VGAScreen->pixels;
-									vga2 = VGAScreen2->pixels;
+									vga = VGAScreen->surf->pixels;
+									vga2 = VGAScreen2->surf->pixels;
 									pic = pic_buffer + (199 - z) * 320;
 
 									setjasondelay(1); /* attempting to emulate JE_waitRetrace();*/
@@ -2816,10 +2816,10 @@ new_game:
 										}
 										else
 										{
-											memcpy(vga, vga2, VGAScreen->pitch);
-											vga2 += VGAScreen->pitch;
+											memcpy(vga, vga2, VGAScreen->surf->pitch);
+											vga2 += VGAScreen->surf->pitch;
 										}
-										vga += VGAScreen->pitch;
+										vga += VGAScreen->surf->pitch;
 									}
 
 									JE_showVGA();
@@ -2833,7 +2833,7 @@ new_game:
 								}
 							}
 
-							memcpy(VGAScreen->pixels, pic_buffer, sizeof(pic_buffer));
+							memcpy(VGAScreen->surf->pixels, pic_buffer, sizeof(pic_buffer));
 						}
 						break;
 
@@ -2841,19 +2841,19 @@ new_game:
 						if (!constantPlay)
 						{
 							/* TODO: NETWORK */
-							memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
+							memcpy(VGAScreen2->surf->pixels, VGAScreen->surf->pixels, VGAScreen2->surf->pitch * VGAScreen2->surf->h);
 
 							tempX = atoi(strnztcpy(buffer, s + 3, 3));
 							JE_loadPic(VGAScreen, tempX, false);
-							memcpy(pic_buffer, VGAScreen->pixels, sizeof(pic_buffer));
+							memcpy(pic_buffer, VGAScreen->surf->pixels, sizeof(pic_buffer));
 
 							service_SDL_events(true);
 							for (int z = 0; z <= 199; z++)
 							{
 								if (!newkey)
 								{
-									vga = VGAScreen->pixels;
-									vga2 = VGAScreen2->pixels;
+									vga = VGAScreen->surf->pixels;
+									vga2 = VGAScreen2->surf->pixels;
 									pic = pic_buffer;
 
 									setjasondelay(1); /* attempting to emulate JE_waitRetrace();*/
@@ -2862,15 +2862,15 @@ new_game:
 									{
 										if (y <= 199 - z)
 										{
-											memcpy(vga, vga2, VGAScreen->pitch);
-											vga2 += VGAScreen->pitch;
+											memcpy(vga, vga2, VGAScreen->surf->pitch);
+											vga2 += VGAScreen->surf->pitch;
 										}
 										else
 										{
 											memcpy(vga, pic, 320);
 											pic += 320;
 										}
-										vga += VGAScreen->pitch;
+										vga += VGAScreen->surf->pitch;
 									}
 
 									JE_showVGA();
@@ -2884,7 +2884,7 @@ new_game:
 								}
 							}
 
-							memcpy(VGAScreen->pixels, pic_buffer, sizeof(pic_buffer));
+							memcpy(VGAScreen->surf->pixels, pic_buffer, sizeof(pic_buffer));
 						}
 						break;
 
@@ -2892,11 +2892,11 @@ new_game:
 						if (!constantPlay)
 						{
 							/* TODO: NETWORK */
-							memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
+							memcpy(VGAScreen2->surf->pixels, VGAScreen->surf->pixels, VGAScreen2->surf->pitch * VGAScreen2->surf->h);
 
 							tempX = atoi(strnztcpy(buffer, s + 3, 3));
 							JE_loadPic(VGAScreen, tempX, false);
-							memcpy(pic_buffer, VGAScreen->pixels, sizeof(pic_buffer));
+							memcpy(pic_buffer, VGAScreen->surf->pixels, sizeof(pic_buffer));
 
 							service_SDL_events(true);
 
@@ -2904,8 +2904,8 @@ new_game:
 							{
 								if (!newkey)
 								{
-									vga = VGAScreen->pixels;
-									vga2 = VGAScreen2->pixels;
+									vga = VGAScreen->surf->pixels;
+									vga2 = VGAScreen2->surf->pixels;
 									pic = pic_buffer;
 
 									setjasondelay(1); /* attempting to emulate JE_waitRetrace();*/
@@ -2914,7 +2914,7 @@ new_game:
 									{
 										memcpy(vga, vga2 + z, 319 - z);
 										vga += 320 - z;
-										vga2 += VGAScreen2->pitch;
+										vga2 += VGAScreen2->surf->pitch;
 										memcpy(vga, pic, z + 1);
 										vga += z;
 										pic += 320;
@@ -2931,7 +2931,7 @@ new_game:
 								}
 							}
 
-							memcpy(VGAScreen->pixels, pic_buffer, sizeof(pic_buffer));
+							memcpy(VGAScreen->surf->pixels, pic_buffer, sizeof(pic_buffer));
 						}
 						break;
 
@@ -3248,7 +3248,7 @@ bool JE_titleScreen( JE_boolean animate )
 	if (isNetworkGame)
 	{
 		JE_loadPic(VGAScreen, 2, false);
-		memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
+		memcpy(VGAScreen2->surf->pixels, VGAScreen->surf->pixels, VGAScreen2->surf->pitch * VGAScreen2->surf->h);
 		JE_dString(VGAScreen, JE_fontCenter("Waiting for other player.", SMALL_FONT_SHAPES), 140, "Waiting for other player.", SMALL_FONT_SHAPES);
 		JE_showVGA();
 		fade_palette(colors, 10, 0, 255);
@@ -3281,7 +3281,7 @@ bool JE_titleScreen( JE_boolean animate )
 		}
 		else
 		{
-			memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
+			memcpy(VGAScreen->surf->pixels, VGAScreen2->surf->pixels, VGAScreen->surf->pitch * VGAScreen->surf->h);
 			JE_dString(VGAScreen, JE_fontCenter(networkText[4-1], SMALL_FONT_SHAPES), 140, networkText[4-1], SMALL_FONT_SHAPES);
 			JE_showVGA();
 
@@ -3348,7 +3348,7 @@ bool JE_titleScreen( JE_boolean animate )
 
 					draw_font_hv_shadow(VGAScreen, 2, 192, opentyrian_version, small_font, left_aligned, 15, 0, false, 1);
 
-					memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
+					memcpy(VGAScreen2->surf->pixels, VGAScreen->surf->pixels, VGAScreen2->surf->pitch * VGAScreen2->surf->h);
 
 					temp = moveTyrianLogoUp ? 62 : 4;
 
@@ -3364,7 +3364,7 @@ bool JE_titleScreen( JE_boolean animate )
 						{
 							setjasondelay(2);
 
-							memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
+							memcpy(VGAScreen->surf->pixels, VGAScreen2->surf->pixels, VGAScreen->surf->pitch * VGAScreen->surf->h);
 
 							blit_sprite(VGAScreenSeg, 11, temp, PLANET_SHAPES, 146); // tyrian logo
 
@@ -3380,7 +3380,7 @@ bool JE_titleScreen( JE_boolean animate )
 					/* Draw Menu Text on Screen */
 					for (int i = 0; i < menunum; ++i)
 					{
-						int x = VGAScreen->w / 2, y = 104 + i * 13;
+						int x = VGAScreen->surf->w / 2, y = 104 + i * 13;
 
 						draw_font_hv(VGAScreen, x - 1, y - 1, menuText[i], normal_font, centered, 15, -10);
 						draw_font_hv(VGAScreen, x + 1, y + 1, menuText[i], normal_font, centered, 15, -10);
@@ -3393,14 +3393,14 @@ bool JE_titleScreen( JE_boolean animate )
 
 					fade_palette(colors, 20, 255 - 16 + 1, 255); // fade in menu items
 
-					memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
+					memcpy(VGAScreen2->surf->pixels, VGAScreen->surf->pixels, VGAScreen2->surf->pitch * VGAScreen2->surf->h);
 				}
 			}
 
-			memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
+			memcpy(VGAScreen->surf->pixels, VGAScreen2->surf->pixels, VGAScreen->surf->pitch * VGAScreen->surf->h);
 
 			// highlight selected menu item
-			draw_font_hv(VGAScreen, VGAScreen->w / 2, 104 + menu * 13, menuText[menu], normal_font, centered, 15, -1);
+			draw_font_hv(VGAScreen, VGAScreen->surf->w / 2, 104 + menu * 13, menuText[menu], normal_font, centered, 15, -1);
 
 			JE_showVGA();
 
@@ -3646,7 +3646,7 @@ trentWinsGame:
 
 void intro_logos( void )
 {
-	SDL_FillRect(VGAScreen, NULL, 0);
+	SDL_FillRect(VGAScreen->surf, NULL, 0);
 
 	fade_white(50);
 
@@ -5032,29 +5032,29 @@ void JE_whoa( void )
 	 * way to get vgascreen as one of the temp buffers), but it's only called
 	 * once so don't worry about it. */
 
-	TempScreen1  = game_screen->pixels;
-	TempScreen2  = VGAScreen2->pixels;
+	TempScreen1  = game_screen->surf->pixels;
+	TempScreen2  = VGAScreen2->surf->pixels;
 
-	screenSize   = VGAScreenSeg->h * VGAScreenSeg->pitch;
-	topBorder    = VGAScreenSeg->pitch * 4; /* Seems an arbitrary number of lines */
-	bottomBorder = VGAScreenSeg->pitch * 7;
+	screenSize   = VGAScreenSeg->surf->h * VGAScreenSeg->surf->pitch;
+	topBorder    = VGAScreenSeg->surf->pitch * 4; /* Seems an arbitrary number of lines */
+	bottomBorder = VGAScreenSeg->surf->pitch * 7;
 
 	/* Okay, one disadvantage to using other screens as temp buffers: they
 	 * need to be the right size.  I doubt they'l ever be anything but 320x200,
 	 * but just in case, these asserts will clue in whoever stumbles across
 	 * the problem.  You can fix it with the stack or malloc. */
-	assert( (unsigned)VGAScreen2->h *  VGAScreen2->pitch >= screenSize
-	    && (unsigned)game_screen->h * game_screen->pitch >= screenSize);
+	assert( (unsigned)VGAScreen2->surf->h *  VGAScreen2->surf->pitch >= screenSize
+	    && (unsigned)game_screen->surf->h * game_screen->surf->pitch >= screenSize);
 
 
 	/* Clear the top and bottom borders.  We don't want to process
 	 * them and we don't want to draw them. */
-	memset((Uint8 *)VGAScreenSeg->pixels, 0, topBorder);
-	memset((Uint8 *)VGAScreenSeg->pixels + screenSize - bottomBorder, 0, bottomBorder);
+	memset((Uint8 *)VGAScreenSeg->surf->pixels, 0, topBorder);
+	memset((Uint8 *)VGAScreenSeg->surf->pixels + screenSize - bottomBorder, 0, bottomBorder);
 
 	/* Copy our test subject to one of the temporary buffers.  Blank the other */
 	memset(TempScreen1, 0, screenSize);
-	memcpy(TempScreen2, VGAScreenSeg->pixels, VGAScreenSeg->h * VGAScreenSeg->pitch);
+	memcpy(TempScreen2, VGAScreenSeg->surf->pixels, VGAScreenSeg->surf->h * VGAScreenSeg->surf->pitch);
 
 
 	service_SDL_events(true);
@@ -5071,16 +5071,16 @@ void JE_whoa( void )
 		{
 			offset = j + i/8192 - 4;
 			color = (TempScreen2[offset                    ] * 12 +
-			         TempScreen1[offset-VGAScreenSeg->pitch]      +
+			         TempScreen1[offset-VGAScreenSeg->surf->pitch]      +
 			         TempScreen1[offset-1                  ]      +
 			         TempScreen1[offset+1                  ]      +
-			         TempScreen1[offset+VGAScreenSeg->pitch]) / 16;
+			         TempScreen1[offset+VGAScreenSeg->surf->pitch]) / 16;
 
 			TempScreen1[j] = color;
 		}
 
 		/* Now copy that mess to the buffer. */
-		memcpy((Uint8 *)VGAScreenSeg->pixels + topBorder, TempScreen1 + topBorder, screenSize - bottomBorder);
+		memcpy((Uint8 *)VGAScreenSeg->surf->pixels + topBorder, TempScreen1 + topBorder, screenSize - bottomBorder);
 
 		JE_showVGA();
 

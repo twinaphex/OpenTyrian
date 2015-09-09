@@ -25,7 +25,7 @@
 
 #include <string.h>
 
-void JE_loadPic(SDL_Surface *screen, JE_byte PCXnumber, JE_boolean storepal )
+void JE_loadPic(LR_Surface *screen, JE_byte PCXnumber, JE_boolean storepal )
 {
 	PCXnumber--;
 
@@ -56,7 +56,7 @@ void JE_loadPic(SDL_Surface *screen, JE_byte PCXnumber, JE_boolean storepal )
 	Uint8 *p = buffer;
 	Uint8 *s; /* screen pointer, 8-bit specific */
 
-	s = (Uint8 *)screen->pixels;
+	s = (Uint8 *)screen->surf->pixels;
 
 	for (int i = 0; i < 320 * 200; )
 	{
@@ -72,7 +72,7 @@ void JE_loadPic(SDL_Surface *screen, JE_byte PCXnumber, JE_boolean storepal )
 		}
 		if (i && (i % 320 == 0))
 		{
-			s += screen->pitch - 320;
+			s += screen->surf->pitch - 320;
 		}
 	}
 

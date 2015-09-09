@@ -45,7 +45,7 @@ JE_byte     smoothie_data[9]; /* [1..9] */
 
 void JE_darkenBackground( JE_word neat )  /* wild detail level */
 {
-	Uint8 *s = VGAScreen->pixels; /* screen pointer, 8-bit specific */
+	Uint8 *s = VGAScreen->surf->pixels; /* screen pointer, 8-bit specific */
 	int x, y;
 	
 	s += 24;
@@ -54,27 +54,27 @@ void JE_darkenBackground( JE_word neat )  /* wild detail level */
 	{
 		for (x = 264; x; x--)
 		{
-			*s = ((((*s & 0x0f) << 4) - (*s & 0x0f) + ((((x - neat - y) >> 2) + *(s-2) + (y == 184 ? 0 : *(s-(VGAScreen->pitch-1)))) & 0x0f)) >> 4) | (*s & 0xf0);
+			*s = ((((*s & 0x0f) << 4) - (*s & 0x0f) + ((((x - neat - y) >> 2) + *(s-2) + (y == 184 ? 0 : *(s-(VGAScreen->surf->pitch-1)))) & 0x0f)) >> 4) | (*s & 0xf0);
 			s++;
 		}
-		s += VGAScreen->pitch - 264;
+		s += VGAScreen->surf->pitch - 264;
 	}
 }
 
-void blit_background_row( SDL_Surface *surface, int x, int y, Uint8 **map )
+void blit_background_row( LR_Surface *surface, int x, int y, Uint8 **map )
 {
-	assert(surface->format->BitsPerPixel == 8);
+	assert(surface->surf->format->BitsPerPixel == 8);
 	
-	Uint8 *pixels = (Uint8 *)surface->pixels + (y * surface->pitch) + x,
-	      *pixels_ll = (Uint8 *)surface->pixels,  // lower limit
-	      *pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
+	Uint8 *pixels = (Uint8 *)surface->surf->pixels + (y * surface->surf->pitch) + x,
+	      *pixels_ll = (Uint8 *)surface->surf->pixels,  // lower limit
+	      *pixels_ul = (Uint8 *)surface->surf->pixels + (surface->surf->h * surface->surf->pitch);  // upper limit
 	
 	for (int y = 0; y < 28; y++)
 	{
 		// not drawing on screen yet; skip y
 		if ((pixels + (12 * 24)) < pixels_ll)
 		{
-			pixels += surface->pitch;
+			pixels += surface->surf->pitch;
 			continue;
 		}
 		
@@ -103,24 +103,24 @@ void blit_background_row( SDL_Surface *surface, int x, int y, Uint8 **map )
 			}
 		}
 		
-		pixels += surface->pitch - 12 * 24;
+		pixels += surface->surf->pitch - 12 * 24;
 	}
 }
 
-void blit_background_row_blend( SDL_Surface *surface, int x, int y, Uint8 **map )
+void blit_background_row_blend( LR_Surface *surface, int x, int y, Uint8 **map )
 {
-	assert(surface->format->BitsPerPixel == 8);
+	assert(surface->surf->format->BitsPerPixel == 8);
 	
-	Uint8 *pixels = (Uint8 *)surface->pixels + (y * surface->pitch) + x,
-	      *pixels_ll = (Uint8 *)surface->pixels,  // lower limit
-	      *pixels_ul = (Uint8 *)surface->pixels + (surface->h * surface->pitch);  // upper limit
+	Uint8 *pixels = (Uint8 *)surface->surf->pixels + (y * surface->surf->pitch) + x,
+	      *pixels_ll = (Uint8 *)surface->surf->pixels,  // lower limit
+	      *pixels_ul = (Uint8 *)surface->surf->pixels + (surface->surf->h * surface->surf->pitch);  // upper limit
 	
 	for (int y = 0; y < 28; y++)
 	{
 		// not drawing on screen yet; skip y
 		if ((pixels + (12 * 24)) < pixels_ll)
 		{
-			pixels += surface->pitch;
+			pixels += surface->surf->pitch;
 			continue;
 		}
 		
@@ -149,13 +149,13 @@ void blit_background_row_blend( SDL_Surface *surface, int x, int y, Uint8 **map 
 			}
 		}
 		
-		pixels += surface->pitch - 12 * 24;
+		pixels += surface->surf->pitch - 12 * 24;
 	}
 }
 
-void draw_background_1( SDL_Surface *surface )
+void draw_background_1( LR_Surface *surface )
 {
-	SDL_FillRect(surface, NULL, 0);
+	SDL_FillRect(surface->surf, NULL, 0);
 	
 	Uint8 **map = (Uint8 **)mapYPos + mapXbpPos - 12;
 	
@@ -167,7 +167,7 @@ void draw_background_1( SDL_Surface *surface )
 	}
 }
 
-void draw_background_2( SDL_Surface *surface )
+void draw_background_2( LR_Surface *surface )
 {
 	if (map2YDelayMax > 1 && backMove2 < 2)
 		backMove2 = (map2YDelay == 1) ? 1 : 0;
@@ -203,7 +203,7 @@ void draw_background_2( SDL_Surface *surface )
 	}
 }
 
-void draw_background_2_blend( SDL_Surface *surface )
+void draw_background_2_blend( LR_Surface *surface )
 {
 	if (map2YDelayMax > 1 && backMove2 < 2)
 		backMove2 = (map2YDelay == 1) ? 1 : 0;
@@ -233,7 +233,7 @@ void draw_background_2_blend( SDL_Surface *surface )
 	}
 }
 
-void draw_background_3( SDL_Surface *surface )
+void draw_background_3( LR_Surface *surface )
 {
 	/* Movement of background */
 	backPos3 += backMove3;
@@ -279,7 +279,7 @@ void JE_filterScreen( JE_shortint col, JE_shortint int_)
 	
 	if (col != -99 && filtrationAvail)
 	{
-		s = VGAScreen->pixels;
+		s = VGAScreen->surf->pixels;
 		s += 24;
 		
 		col <<= 4;
@@ -291,13 +291,13 @@ void JE_filterScreen( JE_shortint col, JE_shortint int_)
 				*s = col | (*s & 0x0f);
 				s++;
 			}
-			s += VGAScreen->pitch - 264;
+			s += VGAScreen->surf->pitch - 264;
 		}
 	}
 	
 	if (int_ != -99 && explosionTransparent)
 	{
-		s = VGAScreen->pixels;
+		s = VGAScreen->surf->pixels;
 		s += 24;
 		
 		for (y = 184; y; y--)
@@ -308,7 +308,7 @@ void JE_filterScreen( JE_shortint col, JE_shortint int_)
 				*s = (*s & 0xf0) | (temp >= 0x1f ? 0 : (temp >= 0x0f ? 0x0f : temp));
 				s++;
 			}
-			s += VGAScreen->pitch - 264;
+			s += VGAScreen->surf->pitch - 264;
 		}
 	}
 }
@@ -318,20 +318,20 @@ void JE_checkSmoothies( void )
 	anySmoothies = (processorType > 2 && (smoothies[1-1] || smoothies[2-1])) || (processorType > 1 && (smoothies[3-1] || smoothies[4-1] || smoothies[5-1]));
 }
 
-void lava_filter( SDL_Surface *dst, SDL_Surface *src )
+void lava_filter( LR_Surface *dst, LR_Surface *src )
 {
-	assert(src->format->BitsPerPixel == 8 && dst->format->BitsPerPixel == 8);
+	assert(src->surf->format->BitsPerPixel == 8 && dst->surf->format->BitsPerPixel == 8);
 	
 	/* we don't need to check for over-reading the pixel surfaces since we only
 	 * read from the top 185+1 scanlines, and there should be 320 */
 	
-	const int dst_pitch = dst->pitch;
-	Uint8 *dst_pixel = (Uint8 *)dst->pixels + (185 * dst_pitch);
-	const Uint8 * const dst_pixel_ll = (Uint8 *)dst->pixels;  // lower limit
+	const int dst_pitch = dst->surf->pitch;
+	Uint8 *dst_pixel = (Uint8 *)dst->surf->pixels + (185 * dst_pitch);
+	const Uint8 * const dst_pixel_ll = (Uint8 *)dst->surf->pixels;  // lower limit
 	
-	const int src_pitch = src->pitch;
-	const Uint8 *src_pixel = (Uint8 *)src->pixels + (185 * src->pitch);
-	const Uint8 * const src_pixel_ll = (Uint8 *)src->pixels;  // lower limit
+	const int src_pitch = src->surf->pitch;
+	const Uint8 *src_pixel = (Uint8 *)src->surf->pixels + (185 * src->surf->pitch);
+	const Uint8 * const src_pixel_ll = (Uint8 *)src->surf->pixels;  // lower limit
 	
 	int w = 320 * 185 - 1;
 	
@@ -366,26 +366,26 @@ void lava_filter( SDL_Surface *dst, SDL_Surface *src )
 	}
 }
 
-void water_filter( SDL_Surface *dst, SDL_Surface *src )
+void water_filter( LR_Surface *dst, LR_Surface *src )
 {
-	assert(src->format->BitsPerPixel == 8 && dst->format->BitsPerPixel == 8);
+	assert(src->surf->format->BitsPerPixel == 8 && dst->surf->format->BitsPerPixel == 8);
 	
 	Uint8 hue = smoothie_data[1] << 4;
 	
 	/* we don't need to check for over-reading the pixel surfaces since we only
 	 * read from the top 185+1 scanlines, and there should be 320 */
 	
-	const int dst_pitch = dst->pitch;
-	Uint8 *dst_pixel = (Uint8 *)dst->pixels + (185 * dst_pitch);
+	const int dst_pitch = dst->surf->pitch;
+	Uint8 *dst_pixel = (Uint8 *)dst->surf->pixels + (185 * dst_pitch);
 	
-	const Uint8 *src_pixel = (Uint8 *)src->pixels + (185 * src->pitch);
+	const Uint8 *src_pixel = (Uint8 *)src->surf->pixels + (185 * src->surf->pitch);
 	
 	int w = 320 * 185 - 1;
 	
 	for (int y = 185 - 1; y >= 0; --y)
 	{
 		dst_pixel -= (dst_pitch - 320);  // in case pitch is not 320
-		src_pixel -= (src->pitch - 320);  // in case pitch is not 320
+		src_pixel -= (src->surf->pitch - 320);  // in case pitch is not 320
 		
 		for (int x = 320 - 1; x >= 0; x -= 8)
 		{
@@ -414,12 +414,12 @@ void water_filter( SDL_Surface *dst, SDL_Surface *src )
 	}
 }
 
-void iced_blur_filter( SDL_Surface *dst, SDL_Surface *src )
+void iced_blur_filter( LR_Surface *dst, LR_Surface *src )
 {
-	assert(src->format->BitsPerPixel == 8 && dst->format->BitsPerPixel == 8);
+	assert(src->surf->format->BitsPerPixel == 8 && dst->surf->format->BitsPerPixel == 8);
 	
-	Uint8 *dst_pixel = dst->pixels;
-	const Uint8 *src_pixel = src->pixels;
+	Uint8 *dst_pixel = dst->surf->pixels;
+	const Uint8 *src_pixel = src->surf->pixels;
 	
 	for (int y = 0; y < 184; ++y)
 	{
@@ -435,17 +435,17 @@ void iced_blur_filter( SDL_Surface *dst, SDL_Surface *src )
 			++src_pixel;
 		}
 		
-		dst_pixel += (dst->pitch - 320);  // in case pitch is not 320
-		src_pixel += (src->pitch - 320);  // in case pitch is not 320
+		dst_pixel += (dst->surf->pitch - 320);  // in case pitch is not 320
+		src_pixel += (src->surf->pitch - 320);  // in case pitch is not 320
 	}
 }
 
-void blur_filter( SDL_Surface *dst, SDL_Surface *src )
+void blur_filter( LR_Surface *dst, LR_Surface *src )
 {
-	assert(src->format->BitsPerPixel == 8 && dst->format->BitsPerPixel == 8);
+	assert(src->surf->format->BitsPerPixel == 8 && dst->surf->format->BitsPerPixel == 8);
 	
-	Uint8 *dst_pixel = dst->pixels;
-	const Uint8 *src_pixel = src->pixels;
+	Uint8 *dst_pixel = dst->surf->pixels;
+	const Uint8 *src_pixel = src->surf->pixels;
 	
 	for (int y = 0; y < 184; ++y)
 	{
@@ -461,8 +461,8 @@ void blur_filter( SDL_Surface *dst, SDL_Surface *src )
 			++src_pixel;
 		}
 		
-		dst_pixel += (dst->pitch - 320);  // in case pitch is not 320
-		src_pixel += (src->pitch - 320);  // in case pitch is not 320
+		dst_pixel += (dst->surf->pitch - 320);  // in case pitch is not 320
+		src_pixel += (src->surf->pitch - 320);  // in case pitch is not 320
 	}
 }
 
@@ -484,23 +484,23 @@ void initialize_starfield( void )
 {
 	for (int i = MAX_STARS-1; i >= 0; --i)
 	{
-		starfield_stars[i].position = mt_rand() % 320 + mt_rand() % 200 * VGAScreen->pitch;
+		starfield_stars[i].position = mt_rand() % 320 + mt_rand() % 200 * VGAScreen->surf->pitch;
 		starfield_stars[i].speed = mt_rand() % 3 + 2;
 		starfield_stars[i].color = mt_rand() % 16 + STARFIELD_HUE;
 	}
 }
 
-void update_and_draw_starfield( SDL_Surface* surface, int move_speed )
+void update_and_draw_starfield( LR_Surface* surface, int move_speed )
 {
-	Uint8* p = (Uint8*)surface->pixels;
+	Uint8* p = (Uint8*)surface->surf->pixels;
 
 	for (int i = MAX_STARS-1; i >= 0; --i)
 	{
 		StarfieldStar* star = &starfield_stars[i];
 
-		star->position += (star->speed + move_speed) * surface->pitch;
+		star->position += (star->speed + move_speed) * surface->surf->pitch;
 
-		if (star->position < 177 * surface->pitch)
+		if (star->position < 177 * surface->surf->pitch)
 		{
 			if (p[star->position] == 0)
 			{
@@ -516,11 +516,11 @@ void update_and_draw_starfield( SDL_Surface* surface, int move_speed )
 				if (star->position > 0 && p[star->position - 1] == 0)
 					p[star->position - 1] = star->color - 4;
 
-				if (p[star->position + surface->pitch] == 0)
-					p[star->position + surface->pitch] = star->color - 4;
+				if (p[star->position + surface->surf->pitch] == 0)
+					p[star->position + surface->surf->pitch] = star->color - 4;
 
-				if (star->position >= surface->pitch && p[star->position - surface->pitch] == 0)
-					p[star->position - surface->pitch] = star->color - 4;
+				if (star->position >= surface->surf->pitch && p[star->position - surface->surf->pitch] == 0)
+					p[star->position - surface->surf->pitch] = star->color - 4;
 			}
 		}
 	}

@@ -101,9 +101,9 @@ void opentyrian_menu( void )
 	fade_black(10);
 	JE_loadPic(VGAScreen, 13, false);
 
-	draw_font_hv(VGAScreen, VGAScreen->w / 2, 5, opentyrian_str, large_font, centered, 15, -3);
+	draw_font_hv(VGAScreen, VGAScreen->surf->w / 2, 5, opentyrian_str, large_font, centered, 15, -3);
 
-	memcpy(VGAScreen2->pixels, VGAScreen->pixels, VGAScreen2->pitch * VGAScreen2->h);
+	memcpy(VGAScreen2->surf->pixels, VGAScreen->surf->pixels, VGAScreen2->surf->pitch * VGAScreen2->surf->h);
 
 	JE_showVGA();
 
@@ -116,7 +116,7 @@ void opentyrian_menu( void )
 	bool fade_in = true, quit = false;
 	do
 	{
-		memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
+		memcpy(VGAScreen->surf->pixels, VGAScreen2->surf->pixels, VGAScreen->surf->pitch * VGAScreen->surf->h);
 
 		for (MenuOptions i = 0; i < MenuOptions_MAX; i++)
 		{
@@ -130,7 +130,7 @@ void opentyrian_menu( void )
 			}
 
 			int y = i != MENU_RETURN ? i * 16 + 32 : 118;
-			draw_font_hv(VGAScreen, VGAScreen->w / 2, y, text, normal_font, centered, 15, menu_items_disabled[i] ? -8 : i != sel ? -4 : -2);
+			draw_font_hv(VGAScreen, VGAScreen->surf->w / 2, y, text, normal_font, centered, 15, menu_items_disabled[i] ? -8 : i != sel ? -4 : -2);
 		}
 
 		JE_showVGA();
@@ -207,7 +207,7 @@ void opentyrian_menu( void )
 
 					scroller_sine(about_text);
 
-					memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
+					memcpy(VGAScreen->surf->pixels, VGAScreen2->surf->pixels, VGAScreen->surf->pitch * VGAScreen->surf->h);
 					JE_showVGA();
 					fade_in = true;
 					break;
@@ -243,7 +243,7 @@ void opentyrian_menu( void )
 					fade_black(10);
 					jukebox();
 
-					memcpy(VGAScreen->pixels, VGAScreen2->pixels, VGAScreen->pitch * VGAScreen->h);
+					memcpy(VGAScreen->surf->pixels, VGAScreen2->surf->pixels, VGAScreen->surf->pitch * VGAScreen->surf->h);
 					JE_showVGA();
 					fade_in = true;
 					break;

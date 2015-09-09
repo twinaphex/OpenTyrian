@@ -29,10 +29,10 @@
 
 #define DST_BPP 2
 
-static void nn_16( SDL_Surface *src_surface, SDL_Surface *dst_surface );
+static void nn_16( LR_Surface *src_surface, LR_Surface *dst_surface );
 
-static void scale2x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface );
-static void scale3x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface );
+static void scale2x_16( LR_Surface *src_surface, LR_Surface *dst_surface );
+static void scale3x_16( LR_Surface *src_surface, LR_Surface *dst_surface );
 
 uint scaler;
 
@@ -56,20 +56,20 @@ void set_scaler_by_name( const char *name )
 	}
 }
 
-void nn_16( SDL_Surface *src_surface, SDL_Surface *dst_surface )
+void nn_16( LR_Surface *src_surface, LR_Surface *dst_surface )
 {
-	Uint8 *src = src_surface->pixels, *src_temp,
-	      *dst = dst_surface->pixels, *dst_temp;
-	int src_pitch = src_surface->pitch,
-	    dst_pitch = dst_surface->pitch;
+	Uint8 *src = src_surface->surf->pixels, *src_temp,
+	      *dst = dst_surface->surf->pixels, *dst_temp;
+	int src_pitch = src_surface->surf->pitch,
+	    dst_pitch = dst_surface->surf->pitch;
 	
-	const int height = vga_height, // src_surface->h
-	          width = vga_width,   // src_surface->w
-	          scale = dst_surface->w / width;
-	assert(scale == dst_surface->h / height);
+	const int height = vga_height, // src_surface->surf->h
+	          width = vga_width,   // src_surface->surf->w
+	          scale = dst_surface->surf->w / width;
+	assert(scale == dst_surface->surf->h / height);
 	
 #ifdef VGA_CENTERED
-	size_t blank = (dst_surface->h - src_surface->h) / 2 * dst_surface->pitch;
+	size_t blank = (dst_surface->surf->h - src_surface->surf->h) / 2 * dst_surface->surf->pitch;
 	memset(dst, 0, blank);
 	dst += blank;
 #endif
@@ -104,15 +104,15 @@ void nn_16( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 #endif
 }
 
-void scale2x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface )
+void scale2x_16( LR_Surface *src_surface, LR_Surface *dst_surface )
 {
-	Uint8 *src = src_surface->pixels, *src_temp,
-	      *dst = dst_surface->pixels, *dst_temp;
-	int src_pitch = src_surface->pitch,
-	    dst_pitch = dst_surface->pitch;
+	Uint8 *src = src_surface->surf->pixels, *src_temp,
+	      *dst = dst_surface->surf->pixels, *dst_temp;
+	int src_pitch = src_surface->surf->pitch,
+	    dst_pitch = dst_surface->surf->pitch;
 	
-	const int height = vga_height, // src_surface->h
-	          width = vga_width;   // src_surface->w
+	const int height = vga_height, // src_surface->surf->h
+	          width = vga_width;   // src_surface->surf->w
 	
 	int prevline, nextline;
 	
@@ -156,15 +156,15 @@ void scale2x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface )
 	}
 }
 
-void scale3x_16( SDL_Surface *src_surface, SDL_Surface *dst_surface )
+void scale3x_16( LR_Surface *src_surface, LR_Surface *dst_surface )
 {
-	Uint8 *src = src_surface->pixels, *src_temp,
-	      *dst = dst_surface->pixels, *dst_temp;
-	int src_pitch = src_surface->pitch,
-	    dst_pitch = dst_surface->pitch;
+	Uint8 *src = src_surface->surf->pixels, *src_temp,
+	      *dst = dst_surface->surf->pixels, *dst_temp;
+	int src_pitch = src_surface->surf->pitch,
+	    dst_pitch = dst_surface->surf->pitch;
 	
-	const int height = vga_height, // src_surface->h
-	          width = vga_width;   // src_surface->w
+	const int height = vga_height, // src_surface->surf->h
+	          width = vga_width;   // src_surface->surf->w
 	
 	int prevline, nextline;
 	

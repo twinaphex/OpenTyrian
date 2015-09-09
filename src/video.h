@@ -21,16 +21,16 @@
 
 #include "opentyr.h"
 
-#include "SDL.h"
+#include "surface.h"
 
 #define vga_width 320
 #define vga_height 200
 
 extern bool fullscreen_enabled;
 
-extern SDL_Surface *VGAScreen, *VGAScreenSeg;
-extern SDL_Surface *game_screen;
-extern SDL_Surface *VGAScreen2;
+extern LR_Surface *VGAScreen, *VGAScreenSeg;
+extern LR_Surface *game_screen;
+extern LR_Surface *VGAScreen2;
 
 void init_video( void );
 
@@ -41,9 +41,9 @@ bool init_any_scaler( bool fullscreen );
 
 void deinit_video( void );
 
-void JE_clr256( SDL_Surface * );
+void JE_clr256( LR_Surface * );
 void JE_showVGA( void );
-void scale_and_flip( SDL_Surface * );
+void scale_and_flip( LR_Surface * );
 
 #endif /* VIDEO_H */
 
