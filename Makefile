@@ -21,11 +21,7 @@ OBJS := $(SRCS:src/%.c=obj/%.o)
 
 # FLAGS ####################################################
 
-ifneq ($(MAKECMDGOALS), release)
-    EXTRA_CFLAGS += -g3 -O0 -Werror
-else
-    EXTRA_CFLAGS += -g0 -O2 -DNDEBUG
-endif
+EXTRA_CFLAGS += -g0 -O2 -DNDEBUG
 EXTRA_CFLAGS += -MMD -pedantic -Wall -Wextra -Wno-missing-field-initializers
 ifeq ($(WITH_NETWORK), true)
     EXTRA_CFLAGS += -DWITH_NETWORK
