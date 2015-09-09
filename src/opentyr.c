@@ -221,7 +221,6 @@ void opentyrian_menu( void )
 					{
 						exit(EXIT_FAILURE);
 					}
-					set_palette(colors, 0, 255); // for switching between 8 bpp scalers
 					break;
 					
 				case MENU_SCALER:
@@ -235,7 +234,6 @@ void opentyrian_menu( void )
 						{
 							exit(EXIT_FAILURE);
 						}
-						set_palette(colors, 0, 255); // for switching between 8 bpp scalers
 					}
 					break;
 					
