@@ -21,6 +21,7 @@
 
 #include "SDL.h"
 #include <errno.h>
+#include <retro_endian.h>
 
 const char *custom_data_dir = ".";
 
@@ -159,17 +160,17 @@ size_t efwrite( void *buffer, size_t size, size_t num, FILE *stream )
 		case 2:
 			swap_buffer = malloc(size * num);
 			for (size_t i = 0; i < num; i++)
-				((Uint16 *)swap_buffer)[i] = SDL_SwapLE16(((Uint16 *)buffer)[i]);
+				((Uint16 *)swap_buffer)[i] = Retro_SwapLE16(((Uint16 *)buffer)[i]);
 			break;
 		case 4:
 			swap_buffer = malloc(size * num);
 			for (size_t i = 0; i < num; i++)
-				((Uint32 *)swap_buffer)[i] = SDL_SwapLE32(((Uint32 *)buffer)[i]);
+				((Uint32 *)swap_buffer)[i] = Retro_SwapLE32(((Uint32 *)buffer)[i]);
 			break;
 		case 8:
 			swap_buffer = malloc(size * num);
 			for (size_t i = 0; i < num; i++)
-				((Uint64 *)swap_buffer)[i] = SDL_SwapLE64(((Uint64 *)buffer)[i]);
+				((Uint64 *)swap_buffer)[i] = Retro_SwapLE64(((Uint64 *)buffer)[i]);
 			break;
 		default:
 			swap_buffer = buffer;

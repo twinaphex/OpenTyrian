@@ -22,6 +22,7 @@
 #include "video.h"
 
 #include <assert.h>
+#include <retro_endian.h>
 
 Sprite_array sprite_table[SPRITE_TABLES_MAX];
 
@@ -501,7 +502,7 @@ void blit_sprite2( LR_Surface *surface, int x, int y, Sprite2_array sprite2s, un
 	const Uint8 * const pixels_ll = (Uint8 *)surface->surf->pixels,  // lower limit
 	            * const pixels_ul = (Uint8 *)surface->surf->pixels + (surface->surf->h * surface->surf->pitch);  // upper limit
 	
-	const Uint8 *data = sprite2s.data + SDL_SwapLE16(((Uint16 *)sprite2s.data)[index - 1]);
+	const Uint8 *data = sprite2s.data + Retro_SwapLE16(((Uint16 *)sprite2s.data)[index - 1]);
 	
 	for (; *data != 0x0f; ++data)
 	{
@@ -537,7 +538,7 @@ void blit_sprite2_blend( LR_Surface *surface,  int x, int y, Sprite2_array sprit
 	const Uint8 * const pixels_ll = (Uint8 *)surface->surf->pixels,  // lower limit
 	            * const pixels_ul = (Uint8 *)surface->surf->pixels + (surface->surf->h * surface->surf->pitch);  // upper limit
 	
-	const Uint8 *data = sprite2s.data + SDL_SwapLE16(((Uint16 *)sprite2s.data)[index - 1]);
+	const Uint8 *data = sprite2s.data + Retro_SwapLE16(((Uint16 *)sprite2s.data)[index - 1]);
 	
 	for (; *data != 0x0f; ++data)
 	{
@@ -573,7 +574,7 @@ void blit_sprite2_darken( LR_Surface *surface, int x, int y, Sprite2_array sprit
 	const Uint8 * const pixels_ll = (Uint8 *)surface->surf->pixels,  // lower limit
 	            * const pixels_ul = (Uint8 *)surface->surf->pixels + (surface->surf->h * surface->surf->pitch);  // upper limit
 	
-	const Uint8 *data = sprite2s.data + SDL_SwapLE16(((Uint16 *)sprite2s.data)[index - 1]);
+	const Uint8 *data = sprite2s.data + Retro_SwapLE16(((Uint16 *)sprite2s.data)[index - 1]);
 	
 	for (; *data != 0x0f; ++data)
 	{
@@ -609,7 +610,7 @@ void blit_sprite2_filter( LR_Surface *surface, int x, int y, Sprite2_array sprit
 	const Uint8 * const pixels_ll = (Uint8 *)surface->surf->pixels,  // lower limit
 	            * const pixels_ul = (Uint8 *)surface->surf->pixels + (surface->surf->h * surface->surf->pitch);  // upper limit
 	
-	const Uint8 *data = sprite2s.data + SDL_SwapLE16(((Uint16 *)sprite2s.data)[index - 1]);
+	const Uint8 *data = sprite2s.data + Retro_SwapLE16(((Uint16 *)sprite2s.data)[index - 1]);
 	
 	for (; *data != 0x0f; ++data)
 	{

@@ -38,7 +38,7 @@
 #include "sizebuf.h"
 #include <assert.h>
 
-#include "SDL_endian.h"
+#include <retro_endian.h>
 
 /* Construct buffer with the passed array and size */
 void SZ_Init(sizebuf_t * sz, Uint8 * buf, unsigned int size)
@@ -157,7 +157,7 @@ void MSG_WriteWord(sizebuf_t * sz, unsigned int value)
 		return;
 	}
 
-	*((Uint16 *)(sz->data + sz->bufferPos)) = SDL_SwapLE16( ((Uint16)value) );
+	*((Uint16 *)(sz->data + sz->bufferPos)) = Retro_SwapLE16( ((Uint16)value) );
 	sz->bufferPos += 2;
 }
 void MSG_WriteDWord(sizebuf_t * sz, unsigned int value)
@@ -168,7 +168,7 @@ void MSG_WriteDWord(sizebuf_t * sz, unsigned int value)
 		return;
 	}
 
-	*((Uint32 *)(sz->data + sz->bufferPos)) = SDL_SwapLE32( ((Uint32)value) );
+	*((Uint32 *)(sz->data + sz->bufferPos)) = Retro_SwapLE32( ((Uint32)value) );
 	sz->bufferPos += 4;
 }
 
@@ -199,7 +199,7 @@ unsigned int MSG_ReadWord(sizebuf_t * sz)
 		return(0);
 	}
 
-	ret = SDL_SwapLE16(*((Uint16 *)(sz->data + sz->bufferPos)));
+	ret = Retro_SwapLE16(*((Uint16 *)(sz->data + sz->bufferPos)));
 	sz->bufferPos += 2;
 
 	return(ret);
@@ -215,7 +215,7 @@ unsigned int MSG_ReadDWord(sizebuf_t * sz)
 		return(0);
 	}
 
-	ret = SDL_SwapLE32(*((Uint32 *)(sz->data + sz->bufferPos)));
+	ret = Retro_SwapLE32(*((Uint32 *)(sz->data + sz->bufferPos)));
 	sz->bufferPos += 4;
 
 	return(ret);

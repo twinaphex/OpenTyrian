@@ -33,6 +33,8 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
+#include <retro_endian.h>
+
 
 /* Configuration Load/Save handler */
 
@@ -802,18 +804,18 @@ void JE_loadConfiguration( void )
 		for (z = 0; z < SAVE_FILES_NUM; z++)
 		{
 			memcpy(&saveFiles[z].encode, p, sizeof(JE_word)); p += 2;
-			saveFiles[z].encode = SDL_SwapLE16(saveFiles[z].encode);
+			saveFiles[z].encode = Retro_SwapLE16(saveFiles[z].encode);
 			
 			memcpy(&saveFiles[z].level, p, sizeof(JE_word)); p += 2;
-			saveFiles[z].level = SDL_SwapLE16(saveFiles[z].level);
+			saveFiles[z].level = Retro_SwapLE16(saveFiles[z].level);
 			
 			memcpy(&saveFiles[z].items, p, sizeof(JE_PItemsType)); p += sizeof(JE_PItemsType);
 			
 			memcpy(&saveFiles[z].score, p, sizeof(JE_longint)); p += 4;
-			saveFiles[z].score = SDL_SwapLE32(saveFiles[z].score);
+			saveFiles[z].score = Retro_SwapLE32(saveFiles[z].score);
 			
 			memcpy(&saveFiles[z].score2, p, sizeof(JE_longint)); p += 4;
-			saveFiles[z].score2 = SDL_SwapLE32(saveFiles[z].score2);
+			saveFiles[z].score2 = Retro_SwapLE32(saveFiles[z].score2);
 			
 			/* SYN: Pascal strings are prefixed by a byte holding the length! */
 			memset(&saveFiles[z].levelName, 0, sizeof(saveFiles[z].levelName));
@@ -841,10 +843,10 @@ void JE_loadConfiguration( void )
 			memcpy(&saveFiles[z].initialDifficulty, p, sizeof(JE_byte)); p++;
 			
 			memcpy(&saveFiles[z].highScore1, p, sizeof(JE_longint)); p += 4;
-			saveFiles[z].highScore1 = SDL_SwapLE32(saveFiles[z].highScore1);
+			saveFiles[z].highScore1 = Retro_SwapLE32(saveFiles[z].highScore1);
 			
 			memcpy(&saveFiles[z].highScore2, p, sizeof(JE_longint)); p += 4;
-			saveFiles[z].highScore2 = SDL_SwapLE32(saveFiles[z].highScore2);
+			saveFiles[z].highScore2 = Retro_SwapLE32(saveFiles[z].highScore2);
 			
 			memset(&saveFiles[z].highScoreName, 0, sizeof(saveFiles[z].highScoreName));
 			memcpy(&saveFiles[z].highScoreName, &p[1], *p);
@@ -913,18 +915,18 @@ void JE_saveConfiguration( void )
 		JE_SaveFileType tempSaveFile;
 		memcpy(&tempSaveFile, &saveFiles[z], sizeof(tempSaveFile));
 		
-		tempSaveFile.encode = SDL_SwapLE16(tempSaveFile.encode);
+		tempSaveFile.encode = Retro_SwapLE16(tempSaveFile.encode);
 		memcpy(p, &tempSaveFile.encode, sizeof(JE_word)); p += 2;
 		
-		tempSaveFile.level = SDL_SwapLE16(tempSaveFile.level);
+		tempSaveFile.level = Retro_SwapLE16(tempSaveFile.level);
 		memcpy(p, &tempSaveFile.level, sizeof(JE_word)); p += 2;
 		
 		memcpy(p, &tempSaveFile.items, sizeof(JE_PItemsType)); p += sizeof(JE_PItemsType);
 		
-		tempSaveFile.score = SDL_SwapLE32(tempSaveFile.score);
+		tempSaveFile.score = Retro_SwapLE32(tempSaveFile.score);
 		memcpy(p, &tempSaveFile.score, sizeof(JE_longint)); p += 4;
 		
-		tempSaveFile.score2 = SDL_SwapLE32(tempSaveFile.score2);
+		tempSaveFile.score2 = Retro_SwapLE32(tempSaveFile.score2);
 		memcpy(p, &tempSaveFile.score2, sizeof(JE_longint)); p += 4;
 		
 		/* SYN: Pascal strings are prefixed by a byte holding the length! */
@@ -952,10 +954,10 @@ void JE_saveConfiguration( void )
 		
 		memcpy(p, &tempSaveFile.initialDifficulty, sizeof(JE_byte)); p++;
 		
-		tempSaveFile.highScore1 = SDL_SwapLE32(tempSaveFile.highScore1);
+		tempSaveFile.highScore1 = Retro_SwapLE32(tempSaveFile.highScore1);
 		memcpy(p, &tempSaveFile.highScore1, sizeof(JE_longint)); p += 4;
 		
-		tempSaveFile.highScore2 = SDL_SwapLE32(tempSaveFile.highScore2);
+		tempSaveFile.highScore2 = Retro_SwapLE32(tempSaveFile.highScore2);
 		memcpy(p, &tempSaveFile.highScore2, sizeof(JE_longint)); p += 4;
 		
 		memset(p, 0, sizeof(tempSaveFile.highScoreName));
