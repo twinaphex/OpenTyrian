@@ -164,7 +164,7 @@ void poll_joystick( int j )
 	joystick[j].input_pressed = false;
 	
 	// indicates that an direction/action has been held long enough to fake a repeat press
-	bool repeat = joystick[j].joystick_delay < SDL_GetTicks();
+	bool repeat = joystick[j].joystick_delay < LR_GetTicks();
 	
 	// update direction state
 	for (uint d = 0; d < COUNTOF(joystick[j].direction); d++)
@@ -199,7 +199,7 @@ void poll_joystick( int j )
 	
 	// if new input, reset press-repeat delay
 	if (joystick[j].input_pressed)
-		joystick[j].joystick_delay = SDL_GetTicks() + joystick_repeat_delay;
+		joystick[j].joystick_delay = LR_GetTicks() + joystick_repeat_delay;
 }
 
 // updates all joystick states

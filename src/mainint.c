@@ -2731,8 +2731,8 @@ void JE_mainKeyboardInput( void )
 		debugHist = 1;
 		debugHistCount = 1;
 
-		/* YKS: clock ticks since midnight replaced by SDL_GetTicks */
-		lastDebugTime = SDL_GetTicks();
+		/* YKS: clock ticks since midnight replaced by LR_GetTicks */
+		lastDebugTime = LR_GetTicks();
 	}
 
 	/* {CHEAT-SKIP LEVEL} */

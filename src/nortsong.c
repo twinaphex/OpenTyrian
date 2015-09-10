@@ -48,41 +48,41 @@ float jasondelay = 1000.0f / (1193180.0f / 0x4300);
 
 void setdelay( JE_byte delay )
 {
-	target = (delay * 16) + SDL_GetTicks();
+	target = (delay * 16) + LR_GetTicks();
 }
 
 void setjasondelay( int delay )
 {
-	target = SDL_GetTicks() + delay * jasondelay;
+	target = LR_GetTicks() + delay * jasondelay;
 }
 
 void setjasondelay2( int delay )
 {
-	target2 = SDL_GetTicks() + delay * jasondelay;
+	target2 = LR_GetTicks() + delay * jasondelay;
 }
 
 int delaycount( void )
 {
-	return (SDL_GetTicks() < target ? target - SDL_GetTicks() : 0);
+	return (LR_GetTicks() < target ? target - LR_GetTicks() : 0);
 }
 
 int delaycount2( void )
 {
-	return (SDL_GetTicks() < target2 ? target2 - SDL_GetTicks() : 0);
+	return (LR_GetTicks() < target2 ? target2 - LR_GetTicks() : 0);
 }
 
 void wait_delay( void )
 {
-	Sint32 delay = target - SDL_GetTicks();
+	Sint32 delay = target - LR_GetTicks();
 	if (delay > 0)
 		LR_Delay(delay);
 }
 
 void service_wait_delay( void )
 {
-	while (SDL_GetTicks() < target)
+	while (LR_GetTicks() < target)
 	{
-		LR_Delay(SDL_GetTicks() - target > SDL_POLL_INTERVAL ? SDL_POLL_INTERVAL : SDL_GetTicks() - target);
+		LR_Delay(LR_GetTicks() - target > SDL_POLL_INTERVAL ? SDL_POLL_INTERVAL : LR_GetTicks() - target);
 		service_SDL_events(false);
 	}
 }
@@ -90,9 +90,9 @@ void service_wait_delay( void )
 void wait_delayorinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joystick )
 {
 	service_SDL_events(true);
-	while (SDL_GetTicks() < target && !((keyboard && keydown) || (mouse && mousedown) || (joystick && joydown)))
+	while (LR_GetTicks() < target && !((keyboard && keydown) || (mouse && mousedown) || (joystick && joydown)))
 	{
-		LR_Delay(SDL_GetTicks() - target > SDL_POLL_INTERVAL ? SDL_POLL_INTERVAL : SDL_GetTicks() - target);
+		LR_Delay(LR_GetTicks() - target > SDL_POLL_INTERVAL ? SDL_POLL_INTERVAL : LR_GetTicks() - target);
 		push_joysticks_as_keyboard();
 		service_SDL_events(false);
 	}

@@ -2066,7 +2066,7 @@ draw_player_shot_loop_end:
 	}
 
 	/*-------      DEbug      ---------*/
-	debugTime = SDL_GetTicks();
+	debugTime = LR_GetTicks();
 	tempW = lastmouse_but;
 	tempX = mouse_x;
 	tempY = mouse_y;

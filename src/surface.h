@@ -41,4 +41,6 @@ void LR_FillRect(LR_Surface *surface, SDL_Rect *rect, Uint8 color);
 
 void LR_Delay(Uint32 ms);
 
+Uint32 LR_GetTicks(void);
+
 #endif
