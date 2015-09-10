@@ -75,14 +75,14 @@ void wait_delay( void )
 {
 	Sint32 delay = target - SDL_GetTicks();
 	if (delay > 0)
-		SDL_Delay(delay);
+		LR_Delay(delay);
 }
 
 void service_wait_delay( void )
 {
 	while (SDL_GetTicks() < target)
 	{
-		SDL_Delay(SDL_GetTicks() - target > SDL_POLL_INTERVAL ? SDL_POLL_INTERVAL : SDL_GetTicks() - target);
+		LR_Delay(SDL_GetTicks() - target > SDL_POLL_INTERVAL ? SDL_POLL_INTERVAL : SDL_GetTicks() - target);
 		service_SDL_events(false);
 	}
 }
@@ -92,7 +92,7 @@ void wait_delayorinput( JE_boolean keyboard, JE_boolean mouse, JE_boolean joysti
 	service_SDL_events(true);
 	while (SDL_GetTicks() < target && !((keyboard && keydown) || (mouse && mousedown) || (joystick && joydown)))
 	{
-		SDL_Delay(SDL_GetTicks() - target > SDL_POLL_INTERVAL ? SDL_POLL_INTERVAL : SDL_GetTicks() - target);
+		LR_Delay(SDL_GetTicks() - target > SDL_POLL_INTERVAL ? SDL_POLL_INTERVAL : SDL_GetTicks() - target);
 		push_joysticks_as_keyboard();
 		service_SDL_events(false);
 	}

@@ -80,11 +80,6 @@ void JE_rectangle( LR_Surface *surface, int a, int b, int c, int d, int e ) /* x
 	}
 }
 
-void LR_FillRect( LR_Surface *surface, SDL_Rect *rect, Uint8 color)
-{
-   SDL_FillRect(surface->surf, rect, color);
-}
-
 void fill_rectangle_xy( LR_Surface *surface, int x, int y, int x2, int y2, Uint8 color )
 {
 	SDL_Rect rect = { x, y, x2 - x + 1, y2 - y + 1 };
