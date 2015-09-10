@@ -160,9 +160,8 @@ void JE_clr256( LR_Surface *screen)
 {
 	memset(screen->surf->pixels, 0, screen->surf->pitch * screen->surf->h);
 }
-void JE_showVGA( void ) { scale_and_flip(VGAScreen); }
 
-void scale_and_flip( LR_Surface *src_surface )
+static void scale_and_flip( LR_Surface *src_surface )
 {
    LR_Surface dst_surface;
 	assert(src_surface->surf->format->BitsPerPixel == 8);
@@ -174,4 +173,10 @@ void scale_and_flip( LR_Surface *src_surface )
 	
 	SDL_Flip(dst_surface.surf);
 }
+
+void JE_showVGA( void )
+{
+   scale_and_flip(VGAScreen);
+}
+
 

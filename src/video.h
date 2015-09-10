@@ -43,7 +43,6 @@ void deinit_video( void );
 
 void JE_clr256( LR_Surface * );
 void JE_showVGA( void );
-void scale_and_flip( LR_Surface * );
 
 #endif /* VIDEO_H */
 
