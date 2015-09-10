@@ -21,6 +21,7 @@
 #include "palette.h"
 #include "video.h"
 #include "video_scale.h"
+#include "surface.h"
 
 #include <assert.h>
 #include <stdbool.h>
@@ -55,7 +56,7 @@ void init_video( void )
 	VGAScreen2->surf  = SDL_CreateRGBSurface(SDL_SWSURFACE, vga_width, vga_height, 8, 0, 0, 0, 0);
 	game_screen->surf = SDL_CreateRGBSurface(SDL_SWSURFACE, vga_width, vga_height, 8, 0, 0, 0, 0);
 
-	SDL_FillRect(VGAScreen->surf, NULL, 0);
+	LR_FillRect(VGAScreen, NULL, 0);
 
 	if (!init_scaler(scaler, fullscreen_enabled) &&  // try desired scaler and desired fullscreen state
 	    !init_any_scaler(fullscreen_enabled) &&      // try any scaler in desired fullscreen state

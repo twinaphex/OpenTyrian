@@ -155,7 +155,7 @@ void blit_background_row_blend( LR_Surface *surface, int x, int y, Uint8 **map )
 
 void draw_background_1( LR_Surface *surface )
 {
-	SDL_FillRect(surface->surf, NULL, 0);
+	LR_FillRect(surface, NULL, 0);
 	
 	Uint8 **map = (Uint8 **)mapYPos + mapXbpPos - 12;
 	

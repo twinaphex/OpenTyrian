@@ -31,8 +31,6 @@ void fill_rectangle_xy( LR_Surface *, int x, int y, int x2, int y2, Uint8 color 
 void JE_barShade( LR_Surface *surface, int a, int b, int c, int d );
 void JE_barBright( LR_Surface *surface, int a, int b, int c, int d );
 
-void LR_FillRect(LR_Surface *surface, SDL_Rect *rect, Uint8 color);
-
 static inline void fill_rectangle_hw( LR_Surface *surface, int x, int y, uint h, uint w, Uint8 color )
 {
 	SDL_Rect rect = { x, y, h, w };

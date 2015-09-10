@@ -37,4 +37,6 @@ typedef struct LR_Surface
 
 #define SET_COLORFORMAT(r, g, b) ((r >> RED_EXPAND) << RED_SHIFT | (g >> GREEN_EXPAND) << GREEN_SHIFT | (b >> BLUE_EXPAND) << BLUE_SHIFT)
 
+void LR_FillRect(LR_Surface *surface, SDL_Rect *rect, Uint8 color);
+
 #endif

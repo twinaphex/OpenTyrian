@@ -3646,7 +3646,7 @@ trentWinsGame:
 
 void intro_logos( void )
 {
-	SDL_FillRect(VGAScreen->surf, NULL, 0);
+	LR_FillRect(VGAScreen, NULL, 0);
 
 	fade_white(50);
 
